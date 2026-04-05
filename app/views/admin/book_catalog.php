@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Book Catalog</title>
-    <link rel="stylesheet" href="../../public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="../../public/assets/css/books.css">
+    <link rel="stylesheet" href="../../../public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="../../../public/assets/css/books.css">
 </head>
 <body>
 
@@ -20,14 +20,14 @@
         <li><a href="dashboard.php">Dashboard</a></li>
         <li><a href="book_management.php" class="active">Books</a></li>
         <li><a href="borrowers.php">Borrowers</a></li>
-        <li><a href="transactions.php">Transactions</a></li>
+        <li><a href="borrow.php">Transactions</a></li>
         <li><a href="overdue.php">Overdue</a></li>
         <li><a href="reports.php">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="../../login.php" class="nav-logout">Logout</a>
+        <a href="../login.php" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -39,12 +39,21 @@
             <h1>Book Catalog</h1>
             <p class="page-subtitle">Browse the complete library collection.</p>
         </div>
-        <!-- View Toggle -->
-        <div class="view-toggle">
-            <button class="view-btn active" id="btn-grid" onclick="switchView('grid')">⊞ Grid</button>
-            <button class="view-btn" id="btn-list" onclick="switchView('list')">☰ List</button>
+            <!-- Grid/List Toggle -->
+            <div class="view-toggle">
+                <button class="view-btn active" id="btn-grid" onclick="switchView('grid')">⊞ Grid</button>
+                <button class="view-btn" id="btn-list" onclick="switchView('list')">☰ List</button>
+            </div>
+
+            <!-- Page Toggle -->
+            <div class="view-toggle">
+                <a href="book_management.php" class="view-btn">📋 Management</a>
+                <a href="book_catalog.php" class="view-btn active">📚 Catalog</a>
+            </div>
         </div>
+
     </div>
+    
 
     <!-- Search & Filter Bar -->
     <div class="toolbar">

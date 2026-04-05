@@ -20,7 +20,7 @@
         <li><a href="dashboard.php">Dashboard</a></li>
         <li><a href="book_management.php" class="active">Books</a></li>
         <li><a href="borrowers.php">Borrowers</a></li>
-        <li><a href="transactions.php">Transactions</a></li>
+        <li><a href="borrow.php">Transactions</a></li>
         <li><a href="overdue.php">Overdue</a></li>
         <li><a href="reports.php">Reports</a></li>
     </ul>
@@ -39,7 +39,14 @@
             <h1>Book Management</h1>
             <p class="page-subtitle">Add, edit, or remove books from the library catalog.</p>
         </div>
-        <button class="btn-primary" onclick="openModal()">➕ Add New Book</button>
+
+            <button class="btn-primary" onclick="openModal()">➕ Add New Book</button>
+
+            <div class="view-toggle">
+                <a href="book_management.php" class="view-btn active">📋 Management</a>
+                <a href="book_catalog.php" class="view-btn">📚 Catalog</a>
+            </div>
+</div>
     </div>
 
     <!-- Search & Filter Bar -->

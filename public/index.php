@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=views/auth/login.php">
+    <meta http-equiv="refresh" content="0; url=../app/views/login.php">
 </head>
 <body></body>
 </html>

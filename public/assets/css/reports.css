@@ -1,0 +1,43 @@
+/* LibroTrack — Reports | public/assets/css/reports.css */
+
+.report-count {
+    display: inline-block;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--brown-dark);
+    background: var(--cream);
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--cream-dark);
+}
+
+/* ---- Genre Bars ---- */
+.genre-bars { display: flex; flex-direction: column; gap: 0.85rem; }
+
+.genre-bar-item { display: flex; flex-direction: column; gap: 0.3rem; }
+
+.genre-label { font-size: 0.82rem; color: var(--brown-dark); font-weight: 500; }
+
+.genre-bar-wrap {
+    width: 100%;
+    background: var(--cream-dark);
+    border-radius: 20px;
+    height: 24px;
+    overflow: hidden;
+}
+
+.genre-bar {
+    height: 100%;
+    background: var(--brown-dark);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--cream);
+    transition: width 0.6s ease;
+    min-width: 40px;
+}

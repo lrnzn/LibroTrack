@@ -19,7 +19,7 @@
         <li><a href="admin_dashboard.php" class="active">Dashboard</a></li>
         <li><a href="book_management.php">Books</a></li>
         <li><a href="borrowers.php">Borrowers</a></li>
-        <li><a href="transactions.php">Transactions</a></li>
+        <li><a href="borrow.php">Transactions</a></li>
         <li><a href="overdue.php">Overdue</a></li>
         <li><a href="reports.php">Reports</a></li>
     </ul>
