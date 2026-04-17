@@ -63,7 +63,7 @@
             </form>
 
             <p id="register-prompt" class="register-prompt" style="display:none;">
-                Don't have an account? <a href="#">Register here</a>
+                Don't have an account? <a href="signup.php">Register here</a>
             </p>
 
         </div>
