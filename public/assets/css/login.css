@@ -153,7 +153,10 @@ form { display: flex; flex-direction: column; gap: 1.1rem; }
 }
 
 .form-group input[type="text"],
-.form-group input[type="password"] {
+.form-group input[type="password"],
+.form-group input[type="email"],
+.form-group input[type="date"],
+.form-group select {
     width: 100%;
     padding: 0.75rem 1rem;
     border: 1.5px solid var(--cream-dark);
@@ -284,4 +287,33 @@ form { display: flex; flex-direction: column; gap: 1.1rem; }
     .left-panel { display: none; }
     .right-panel { flex: 1; padding: 1.5rem; }
     .login-card { box-shadow: none; padding: 2rem 1.5rem; }
+}
+/* ── Login Error Message ─────────────────────────────────────────── */
+.login-error {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #FDECEA;
+    color: #C0392B;
+    border: 1.5px solid #F5C6C2;
+    border-left: 4px solid #C0392B;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    animation: shakeError 0.4s ease;
+}
+
+.login-error-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+@keyframes shakeError {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-6px); }
+    40%       { transform: translateX(6px); }
+    60%       { transform: translateX(-4px); }
+    80%       { transform: translateX(4px); }
 }
