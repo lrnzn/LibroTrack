@@ -64,6 +64,7 @@ CREATE TABLE tbl_books (
     copies      INT UNSIGNED    NOT NULL DEFAULT 1,
     location    VARCHAR(100)    NULL,
     description TEXT            NULL,
+    cover_image VARCHAR(255)    NULL,
     dateAdded   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (bookID)
