@@ -32,10 +32,15 @@ async function openViewModal(id) {
             year: 'numeric', month: 'long', day: 'numeric'
         });
 
+        const coverHtml = b.cover_image
+            ? `<img src="/LibroTrack/public/assets/img/covers/${b.cover_image}" alt="Cover"
+                    style="width:64px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--cream-dark);">`
+            : `<span style="font-size:3rem;">📖</span>`;
+
         document.getElementById('view-modal-body').innerHTML = `
             <div style="display:grid;gap:0.75rem;">
                 <div style="background:var(--cream);border-radius:12px;padding:1.25rem;display:flex;gap:1rem;align-items:center;">
-                    <span style="font-size:3rem;">📖</span>
+                    ${coverHtml}
                     <div>
                         <h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--brown-dark);margin-bottom:0.25rem;">
                             ${escHtml(b.title)}
@@ -91,6 +96,20 @@ async function openEditModal(id) {
         document.getElementById('edit-copies').value      = b.copies;
         document.getElementById('edit-location').value    = b.location || '';
         document.getElementById('edit-description').value = b.description || '';
+
+        // Show current cover image if it exists
+        const coverWrap    = document.getElementById('edit-current-cover');
+        const coverPreview = document.getElementById('edit-cover-preview');
+        const removeCheck  = document.getElementById('edit-remove-image');
+        const coverInput   = document.getElementById('edit-cover-input');
+        removeCheck.checked = false;
+        coverInput.value    = '';
+        if (b.cover_image) {
+            coverPreview.src        = `/LibroTrack/public/assets/img/covers/${b.cover_image}`;
+            coverWrap.style.display = 'block';
+        } else {
+            coverWrap.style.display = 'none';
+        }
 
         document.getElementById('edit-overlay').classList.add('active');
         document.getElementById('edit-modal').classList.add('active');
