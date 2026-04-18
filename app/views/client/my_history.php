@@ -4,28 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — My Borrow History</title>
-    <link rel="stylesheet" href="../../../public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="../../../public/assets/css/books.css">
-    <link rel="stylesheet" href="../../../public/assets/css/borrowers.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/borrowers.css">
 </head>
 <body>
 
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="../../../public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge nav-role-badge--student">Student</span>
     </div>
     <ul class="nav-links">
-        <li><a href="dashboard.php">Home</a></li>
-        <li><a href="catalog.php">Browse Books</a></li>
-        <li><a href="my_borrowed.php">My Borrowed</a></li>
-        <li><a href="my_history.php" class="active">My History</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Student&action=index">Home</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Student&action=catalog">Browse Books</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Student&action=borrowed">My Borrowed</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Student&action=history" class="active">My History</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">🎓</span>
         <span class="nav-username">Juan dela Cruz</span>
-        <a href="../login.php" class="nav-logout">Logout</a>
+        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 

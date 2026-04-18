@@ -4,27 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Student Dashboard</title>
-    <link rel="stylesheet" href="../../../public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
 </head>
 <body>
 
 <!-- Top Navigation -->
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="../../../public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge nav-role-badge--student">Student</span>
     </div>
     <ul class="nav-links">
-        <li><a href="student_dashboard.php" class="active">Home</a></li>
-        <li><a href="catalog.php">Browse Books</a></li>
-        <li><a href="my_borrowed.php">My Borrowed</a></li>
-        <li><a href="my_history.php">My History</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Student&action=index" class="active">Home</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Student&action=catalog">Browse Books</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Student&action=borrowed">My Borrowed</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Student&action=history">My History</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">🎓</span>
         <span class="nav-username">Juan dela Cruz</span>
-        <a href="../login.php" class="nav-logout">Logout</a>
+        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -72,7 +72,7 @@
         <div class="card">
             <div class="card-head">
                 <h2>My Borrowed Books</h2>
-                <a href="my_borrowed.php" class="card-link">View all →</a>
+                <a href="/librotrack/public/index.php?controller=Student&action=borrowed" class="card-link">View all →</a>
             </div>
             <table class="data-table">
                 <thead>
@@ -117,9 +117,9 @@
                     <h2>Quick Actions</h2>
                 </div>
                 <div class="quick-actions">
-                    <a href="catalog.php" class="action-btn">🔍 Browse Books</a>
-                    <a href="my_borrowed.php" class="action-btn">📖 My Books</a>
-                    <a href="my_history.php" class="action-btn">🕘 My History</a>
+                    <a href="/librotrack/public/index.php?controller=Student&action=catalog" class="action-btn">🔍 Browse Books</a>
+                    <a href="/librotrack/public/index.php?controller=Student&action=borrowed" class="action-btn">📖 My Books</a>
+                    <a href="/librotrack/public/index.php?controller=Student&action=history" class="action-btn">🕘 My History</a>
                 </div>
             </div>
 

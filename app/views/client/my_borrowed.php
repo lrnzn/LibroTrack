@@ -4,28 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — My Borrowed Books</title>
-    <link rel="stylesheet" href="../../../public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="../../../public/assets/css/books.css">
-    <link rel="stylesheet" href="../../../public/assets/css/borrowers.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/borrowers.css">
 </head>
 <body>
 
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="../../../public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge nav-role-badge--student">Student</span>
     </div>
     <ul class="nav-links">
-        <li><a href="dashboard.php">Home</a></li>
-        <li><a href="catalog.php">Browse Books</a></li>
-        <li><a href="my_borrowed.php" class="active">My Borrowed</a></li>
-        <li><a href="my_history.php">My History</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Student&action=index">Home</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Student&action=catalog">Browse Books</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Student&action=borrowed" class="active">My Borrowed</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Student&action=history">My History</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">🎓</span>
         <span class="nav-username">Juan dela Cruz</span>
-        <a href="../login.php" class="nav-logout">Logout</a>
+        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -36,7 +36,7 @@
             <h1>My Borrowed Books</h1>
             <p class="page-subtitle">Your currently borrowed books and due dates.</p>
         </div>
-        <a href="catalog.php" class="btn-primary">🔍 Browse More Books</a>
+        <a href="/librotrack/public/index.php?controller=Student&action=catalog" class="btn-primary">🔍 Browse More Books</a>
     </div>
 
     <!-- Stats -->
@@ -105,7 +105,7 @@
     <div class="card" style="margin-top:1.5rem; text-align:center; padding:2rem; border: 2px dashed var(--cream-dark);">
         <p style="font-size:2rem; margin-bottom:0.5rem;">➕</p>
         <p style="color:var(--text-muted); font-size:0.9rem;">You can still borrow <strong>1 more book</strong>.</p>
-        <a href="catalog.php" class="btn-primary" style="display:inline-block; margin-top:1rem;">Browse Books</a>
+        <a href="/librotrack/public/index.php?controller=Student&action=catalog" class="btn-primary" style="display:inline-block; margin-top:1rem;">Browse Books</a>
     </div>
 
 </main>
