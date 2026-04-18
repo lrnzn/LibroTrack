@@ -1,8 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=../app/views/login.php">
-</head>
-<body></body>
-</html>
+<?php
+
+$controller = $_GET['controller'] ?? 'Auth';
+$action = $_GET['action'] ?? 'login';
+
+$controllerName = $controller . "Controller";
+$controllerFile = "../app/controllers/" . $controllerName . ".php";
+
+if (!file_exists($controllerFile)) {
+    die("Controller not found.");
+}
+
+require_once $controllerFile;
+
+$controllerObj = new $controllerName();
+
+if (!method_exists($controllerObj, $action)) {
+    die("Action not found.");
+}
+
+$controllerObj->$action();
+?>
