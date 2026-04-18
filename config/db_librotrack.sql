@@ -5,8 +5,8 @@
 -- ============================================
 
 -- Create and select database
-CREATE DATABASE IF NOT EXISTS librotrack;
-USE librotrack;
+CREATE DATABASE IF NOT EXISTS db_librotrack;
+USE db_librotrack;
 
 -- ============================================
 --  TABLE: tbl_users
