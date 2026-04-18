@@ -27,24 +27,28 @@
 
                 <!-- Student Info -->
                 
-                <div class="form-group">
-                    <label>First Name</label>
-                    <input type="text" name="fname" placeholder="Enter your first name" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="fname" placeholder="Enter your first name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Middle Name</label>
+                        <input type="text" name="mname" placeholder="Enter your middle name">
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Middle Name</label>
-                    <input type="text" name="mname" placeholder="Enter your middle name">
-                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="lname" placeholder="Enter your last name" required>
+                    </div>
 
-                <div class="form-group">
-                    <label>Last Name</label>
-                    <input type="text" name="lname" placeholder="Enter your last name" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Ext.</label>
-                    <input type="text" name="nameExt" placeholder="Enter your name extension">
+                    <div class="form-group">
+                        <label>Ext.</label>
+                        <input type="text" name="nameExt" placeholder="Ex: Jr.">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -77,7 +81,7 @@
 
                 <div class="register-prompt">
                     Already have an account?
-                    <a href="/LibroTrack/public/index.php?controller=Auth&action=login">Login</a>
+                    <a href="login.php">Login</a>
                 </div>
 
             </form>

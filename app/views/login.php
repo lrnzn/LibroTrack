@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Login</title>
-    <link rel="stylesheet" href="../../public/assets/css/login.css">
+    <link rel="stylesheet" href="/LibroTrack/public/assets/css/login.css">
 </head>
 <body>
 <div class="page-wrapper">
 
     <!-- Left Panel -->
     <div class="left-panel">
-        <img src="../../public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="/LibroTrack/public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
         <h1>LibroTrack</h1>
         <p>Your campus library,<br>organized and at your fingertips.</p>
     </div>
@@ -63,7 +63,7 @@
             </form>
 
             <p id="register-prompt" class="register-prompt" style="display:none;">
-                Don't have an account? <a href="signup.php">Register here</a>
+                Don't have an account? <a href="/LibroTrack/app/views/signup.php">Register here</a>
             </p>
 
         </div>
