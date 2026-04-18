@@ -1,4 +1,15 @@
-
+<?php
+// Safe defaults — prevents warnings if view is loaded without the controller
+$books        = $books        ?? [];
+$genres       = $genres       ?? [];
+$stats        = $stats        ?? ['total_books' => 0, 'total_copies' => 0, 'available_copies' => 0, 'currently_borrowed' => 0];
+$search       = $search       ?? '';
+$genre        = $genre        ?? '';
+$status       = $status       ?? '';
+$flash        = $flash        ?? '';
+$flash_type   = $flash_type   ?? 'success';
+$flash_action = $flash_action ?? '';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -132,6 +143,7 @@
             <thead>
                 <tr>
                     <th>#</th>
+                    <th>Cover</th>
                     <th>Title</th>
                     <th>Author</th>
                     <th>Genre</th>
@@ -151,6 +163,14 @@
                 ?>
                 <tr id="row-<?= $book['bookID'] ?>" <?= $isNew ? 'class="highlight-row"' : '' ?>>
                     <td><?= $i + 1 ?></td>
+                    <td>
+                        <?php if (!empty($book['cover_image'])): ?>
+                            <img src="/LibroTrack/public/assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
+                                 alt="Cover" style="height:48px;width:36px;object-fit:cover;border-radius:4px;border:1px solid var(--cream-dark);">
+                        <?php else: ?>
+                            <span style="font-size:1.5rem;">📖</span>
+                        <?php endif; ?>
+                    </td>
                     <td><strong><?= htmlspecialchars($book['title']) ?></strong></td>
                     <td><?= htmlspecialchars($book['author']) ?></td>
                     <td><?= htmlspecialchars($book['genre']) ?></td>
@@ -186,7 +206,7 @@
         <button class="modal-close" onclick="closeAddModal()">✕</button>
     </div>
     <div class="modal-body">
-        <form action="/LibroTrack/public/index.php?controller=Book&action=store" method="POST">
+        <form action="/LibroTrack/public/index.php?controller=Book&action=store" method="POST" enctype="multipart/form-data">
             <div class="form-row">
                 <div class="form-group">
                     <label>Book Title *</label>
@@ -233,6 +253,11 @@
                 <label>Description (optional)</label>
                 <textarea name="description" rows="3" placeholder="Brief description of the book..."></textarea>
             </div>
+            <div class="form-group">
+                <label>Cover Image (optional)</label>
+                <input type="file" name="cover_image" accept="image/jpeg,image/png,image/gif,image/webp">
+                <small style="color:var(--text-muted);font-size:0.78rem;">JPG, PNG, GIF or WEBP — max 5MB</small>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
                 <button type="submit" class="btn-primary">💾 Save Book</button>
@@ -261,7 +286,7 @@
         <button class="modal-close" onclick="closeEditModal()">✕</button>
     </div>
     <div class="modal-body">
-        <form action="/LibroTrack/public/index.php?controller=Book&action=update" method="POST">
+        <form action="/LibroTrack/public/index.php?controller=Book&action=update" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="bookID" id="edit-bookID">
             <div class="form-row">
                 <div class="form-group">
@@ -308,6 +333,19 @@
             <div class="form-group">
                 <label>Description (optional)</label>
                 <textarea name="description" id="edit-description" rows="3" placeholder="Brief description of the book..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Cover Image (optional)</label>
+                <div id="edit-current-cover" style="margin-bottom:0.5rem;display:none;">
+                    <img id="edit-cover-preview" src="" alt="Current cover"
+                         style="height:80px;border-radius:8px;border:1px solid var(--cream-dark);object-fit:cover;">
+                    <label style="display:flex;align-items:center;gap:0.4rem;margin-top:0.4rem;font-size:0.82rem;cursor:pointer;">
+                        <input type="hidden" name="remove_image" value="0">
+                        <input type="checkbox" name="remove_image" id="edit-remove-image" value="1"> Remove current image
+                    </label>
+                </div>
+                <input type="file" name="cover_image" id="edit-cover-input" accept="image/jpeg,image/png,image/gif,image/webp">
+                <small style="color:var(--text-muted);font-size:0.78rem;">Upload a new image to replace the current one. JPG, PNG, GIF or WEBP — max 5MB</small>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>

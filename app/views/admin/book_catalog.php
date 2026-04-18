@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Book Catalog</title>
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
 </head>
 <body>
 
 <!-- Top Navigation -->
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/LibroTrack/public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/LibroTrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Book&action=index" class="active">Books</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Book&action=index" class="active">Books</a></li>
         <li><a href="#">Borrowers</a></li>
         <li><a href="#">Transactions</a></li>
         <li><a href="#">Overdue</a></li>
@@ -27,7 +27,7 @@
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="/LibroTrack/public/index.php?controller=Auth&action=login" class="nav-logout">Logout</a>
+        <a href="/librotrack/public/index.php?controller=Auth&action=login" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -48,8 +48,8 @@
 
         <!-- Page Toggle -->
         <div class="view-toggle">
-            <a href="/LibroTrack/public/index.php?controller=Book&action=create" class="view-btn">📋 Management</a>
-            <a href="/LibroTrack/public/index.php?controller=Book&action=index" class="view-btn active">📚 Catalog</a>
+            <a href="/librotrack/public/index.php?controller=Book&action=index" class="view-btn">📋 Management</a>
+            <a href="/librotrack/public/index.php?controller=Book&action=index" class="view-btn active">📚 Catalog</a>
         </div>
     </div>
 
@@ -124,26 +124,7 @@
 
 </main>
 
-<script>
-function switchView(view) {
-    const grid = document.getElementById('books-grid');
-    const list = document.getElementById('books-list');
-    const btnGrid = document.getElementById('btn-grid');
-    const btnList = document.getElementById('btn-list');
-
-    if (view === 'grid') {
-        grid.style.display = 'grid';
-        list.style.display = 'none';
-        btnGrid.classList.add('active');
-        btnList.classList.remove('active');
-    } else {
-        grid.style.display = 'none';
-        list.style.display = 'block';
-        btnGrid.classList.remove('active');
-        btnList.classList.add('active');
-    }
-}
-</script>
+<script src="/librotrack/public/assets/js/book_catalog.js"></script>
 
 </body>
 </html>

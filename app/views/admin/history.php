@@ -1,33 +1,51 @@
+<?php
+$transactions = $transactions ?? [];
+$stats        = $stats        ?? ['total' => 0, 'borrowed' => 0, 'returned' => 0, 'overdue' => 0];
+$search       = $search       ?? '';
+$status       = $status       ?? '';
+$from         = $from         ?? '';
+$to           = $to           ?? '';
+$flash        = $flash        ?? '';
+$flash_type   = $flash_type   ?? 'success';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Transaction History</title>
-    <link rel="stylesheet" href="../../../public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="../../../public/assets/css/books.css">
-    <link rel="stylesheet" href="../../../public/assets/css/borrowers.css">
+    <link rel="stylesheet" href="/LibroTrack/public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/LibroTrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="/LibroTrack/public/assets/css/borrowers.css">
+    <link rel="stylesheet" href="/LibroTrack/public/assets/css/book_management.css">
 </head>
 <body>
 
+<?php if (!empty($flash)): ?>
+<div class="toast toast--<?= htmlspecialchars($flash_type) ?>">
+    <?= $flash_type === 'success' ? '✅' : '❌' ?>
+    <?= htmlspecialchars($flash) ?>
+</div>
+<?php endif; ?>
+
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="../../../public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="/LibroTrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="dashboard.php">Dashboard</a></li>
-        <li><a href="book_management.php">Books</a></li>
-        <li><a href="borrowers.php">Borrowers</a></li>
-        <li><a href="borrow.php" class="active">Transactions</a></li>
-        <li><a href="overdue.php">Overdue</a></li>
-        <li><a href="reports.php">Reports</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Book&action=index">Books</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Transaction&action=index" class="active">Transactions</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="../login.php" class="nav-logout">Logout</a>
+        <a href="/LibroTrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -39,47 +57,64 @@
             <p class="page-subtitle">Complete log of all borrowing and returning activities.</p>
         </div>
         <div class="view-toggle">
-            <a href="borrow.php" class="view-btn">📤 Borrow</a>
-            <a href="return.php" class="view-btn">📥 Return</a>
-            <a href="history.php" class="view-btn active">🕘 History</a>
+            <a href="/LibroTrack/public/index.php?controller=Transaction&action=index"      class="view-btn">📤 Borrow</a>
+            <a href="/LibroTrack/public/index.php?controller=Transaction&action=returnPage" class="view-btn">📥 Return</a>
+            <a href="/LibroTrack/public/index.php?controller=Transaction&action=history"    class="view-btn active">🕘 History</a>
         </div>
     </div>
 
     <!-- Stats -->
-    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr); margin-bottom:1.5rem;">
+    <div class="stats-row" style="grid-template-columns:repeat(4,1fr);">
         <div class="stat-card">
             <div class="stat-icon">📋</div>
-            <div class="stat-info"><span class="stat-value">1,842</span><span class="stat-label">Total Transactions</span></div>
+            <div><div class="stat-value"><?= number_format($stats['total']) ?></div><div class="stat-label">Total Transactions</div></div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">📤</div>
-            <div class="stat-info"><span class="stat-value">257</span><span class="stat-label">Currently Borrowed</span></div>
+            <div><div class="stat-value"><?= number_format($stats['borrowed']) ?></div><div class="stat-label">Currently Borrowed</div></div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">📥</div>
-            <div class="stat-info"><span class="stat-value">1,567</span><span class="stat-label">Returned</span></div>
+            <div><div class="stat-value"><?= number_format($stats['returned']) ?></div><div class="stat-label">Returned</div></div>
         </div>
         <div class="stat-card stat-card--warning">
             <div class="stat-icon">⚠️</div>
-            <div class="stat-info"><span class="stat-value">18</span><span class="stat-label">Overdue</span></div>
+            <div><div class="stat-value"><?= number_format($stats['overdue']) ?></div><div class="stat-label">Overdue</div></div>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="toolbar">
-        <input type="text" class="search-input" placeholder="🔍 Search by borrower name or book title...">
-        <input type="date" class="filter-select" title="From date">
-        <input type="date" class="filter-select" title="To date">
-        <select class="filter-select">
+    <form class="toolbar search-form" method="GET" action="/LibroTrack/public/index.php">
+        <input type="hidden" name="controller" value="Transaction">
+        <input type="hidden" name="action"     value="history">
+        <input type="text" name="search" class="search-input"
+               placeholder="🔍 Search by borrower or book title..."
+               value="<?= htmlspecialchars($search) ?>">
+        <input type="date" name="from" class="filter-select"
+               title="From date" value="<?= htmlspecialchars($from) ?>">
+        <input type="date" name="to" class="filter-select"
+               title="To date" value="<?= htmlspecialchars($to) ?>">
+        <select name="status" class="filter-select" onchange="this.form.submit()">
             <option value="">All Status</option>
-            <option>Borrowed</option>
-            <option>Returned</option>
-            <option>Overdue</option>
+            <option value="borrowed" <?= $status === 'borrowed' ? 'selected' : '' ?>>Borrowed</option>
+            <option value="returned" <?= $status === 'returned' ? 'selected' : '' ?>>Returned</option>
+            <option value="overdue"  <?= $status === 'overdue'  ? 'selected' : '' ?>>Overdue</option>
         </select>
-    </div>
+        <button type="submit" class="btn-primary">Search</button>
+        <?php if ($search || $status || $from || $to): ?>
+            <a href="/LibroTrack/public/index.php?controller=Transaction&action=history"
+               class="btn-cancel" style="text-decoration:none;">✕ Clear</a>
+        <?php endif; ?>
+    </form>
 
     <!-- Table -->
     <div class="card">
+        <?php if (empty($transactions)): ?>
+            <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <p>No transactions found<?= $search || $status || $from || $to ? ' matching your filters' : '' ?>.</p>
+            </div>
+        <?php else: ?>
         <table class="data-table">
             <thead>
                 <tr>
@@ -91,86 +126,121 @@
                     <th>Return Date</th>
                     <th>Penalty</th>
                     <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
+                <?php foreach ($transactions as $i => $t):
+                    $isOverdue = (int)$t['daysOverdue'] > 0 && $t['status'] !== 'returned';
+                    if ($isOverdue) {
+                        $badgeClass = 'badge--overdue';
+                        $badgeLabel = 'Overdue';
+                    } elseif ($t['status'] === 'returned') {
+                        $badgeClass = 'badge--returned';
+                        $badgeLabel = 'Returned';
+                    } else {
+                        $badgeClass = 'badge--borrowed';
+                        $badgeLabel = 'Borrowed';
+                    }
+                    $deleteLabel = htmlspecialchars($t['studentName'] . ' — ' . $t['bookTitle']);
+                ?>
                 <tr>
-                    <td>1842</td>
-                    <td>Juan dela Cruz</td>
-                    <td>Introduction to Computing</td>
-                    <td>Mar 25, 2025</td>
-                    <td>Apr 08, 2025</td>
-                    <td>—</td>
-                    <td>—</td>
-                    <td><span class="badge badge--borrowed">Borrowed</span></td>
+                    <td><?= $t['transactionID'] ?></td>
+                    <td><?= htmlspecialchars($t['studentName']) ?></td>
+                    <td><?= htmlspecialchars($t['bookTitle']) ?></td>
+                    <td><?= date('M d, Y', strtotime($t['borrowDate'])) ?></td>
+                    <td><?= date('M d, Y', strtotime($t['dueDate'])) ?></td>
+                    <td><?= $t['returnDate'] ? date('M d, Y', strtotime($t['returnDate'])) : '—' ?></td>
+                    <td>
+                        <?php if ($t['penaltyAmount']): ?>
+                            <span class="badge <?= $t['penaltyPaid'] ? 'badge--returned' : 'badge--overdue' ?>">
+                                ₱<?= number_format($t['penaltyAmount'], 2) ?>
+                                <?= $t['penaltyPaid'] ? ' ✓' : '' ?>
+                            </span>
+                        <?php else: ?>
+                            —
+                        <?php endif; ?>
+                    </td>
+                    <td><span class="badge <?= $badgeClass ?>"><?= $badgeLabel ?></span></td>
+                    <td class="action-col">
+                        <?php if ($t['status'] !== 'returned'): ?>
+                            <button class="btn-edit"
+                                onclick="openEditModal(<?= $t['transactionID'] ?>)">✏️ Edit</button>
+                        <?php endif; ?>
+                        <?php if ($t['status'] === 'returned'): ?>
+                            <button class="btn-delete"
+                                onclick="openDeleteModal(<?= $t['transactionID'] ?>, '<?= addslashes($deleteLabel) ?>')">
+                                🗑️ Delete
+                            </button>
+                        <?php endif; ?>
+                    </td>
                 </tr>
-                <tr>
-                    <td>1841</td>
-                    <td>Maria Santos</td>
-                    <td>Calculus Vol. 2</td>
-                    <td>Mar 24, 2025</td>
-                    <td>Mar 31, 2025</td>
-                    <td>Mar 30, 2025</td>
-                    <td>—</td>
-                    <td><span class="badge badge--returned">Returned</span></td>
-                </tr>
-                <tr>
-                    <td>1840</td>
-                    <td>Pedro Reyes</td>
-                    <td>Philippine History</td>
-                    <td>Mar 20, 2025</td>
-                    <td>Apr 03, 2025</td>
-                    <td>—</td>
-                    <td>₱25.00</td>
-                    <td><span class="badge badge--overdue">Overdue</span></td>
-                </tr>
-                <tr>
-                    <td>1839</td>
-                    <td>Ana Lim</td>
-                    <td>Data Structures</td>
-                    <td>Mar 22, 2025</td>
-                    <td>Apr 10, 2025</td>
-                    <td>—</td>
-                    <td>—</td>
-                    <td><span class="badge badge--borrowed">Borrowed</span></td>
-                </tr>
-                <tr>
-                    <td>1838</td>
-                    <td>Carlo Mendoza</td>
-                    <td>English for Academic</td>
-                    <td>Mar 18, 2025</td>
-                    <td>Mar 25, 2025</td>
-                    <td>Mar 24, 2025</td>
-                    <td>—</td>
-                    <td><span class="badge badge--returned">Returned</span></td>
-                </tr>
-                <tr>
-                    <td>1837</td>
-                    <td>Lea Gomez</td>
-                    <td>Biology Essentials</td>
-                    <td>Mar 15, 2025</td>
-                    <td>Mar 28, 2025</td>
-                    <td>Mar 31, 2025</td>
-                    <td>₱15.00</td>
-                    <td><span class="badge badge--returned">Returned</span></td>
-                </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
-
         <div class="pagination">
-            <span class="pagination-info">Showing 1–6 of 1,842 transactions</span>
-            <div class="pagination-controls">
-                <button class="page-btn" disabled>← Prev</button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">2</button>
-                <button class="page-btn">3</button>
-                <span>...</span>
-                <button class="page-btn">307</button>
-                <button class="page-btn">Next →</button>
-            </div>
+            <span class="pagination-info">
+                Showing <?= count($transactions) ?> transaction<?= count($transactions) !== 1 ? 's' : '' ?>
+                <?= $search || $status || $from || $to ? 'matching your filters' : 'total' ?>
+            </span>
         </div>
+        <?php endif; ?>
     </div>
 
 </main>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-overlay" onclick="closeEditModal()"></div>
+<div class="modal modal--sm" id="edit-modal">
+    <div class="modal-header">
+        <h2>✏️ Edit Transaction</h2>
+        <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+        <p id="edit-info" style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1rem;"></p>
+        <form action="/LibroTrack/public/index.php?controller=Transaction&action=update" method="POST">
+            <input type="hidden" name="transactionID" id="edit-transactionID">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Borrow Date *</label>
+                    <input type="date" name="borrowDate" id="edit-borrowDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Due Date *</label>
+                    <input type="date" name="dueDate" id="edit-dueDate" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+                <button type="submit" class="btn-primary">💾 Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="delete-overlay" onclick="closeDeleteModal()"></div>
+<div class="modal modal--sm" id="delete-modal">
+    <div class="modal-header">
+        <h2>🗑️ Delete Transaction</h2>
+        <button class="modal-close" onclick="closeDeleteModal()">✕</button>
+    </div>
+    <div class="modal-body">
+        <p class="delete-msg">
+            Are you sure you want to delete the transaction for
+            <strong id="delete-transaction-label"></strong>?
+            This action cannot be undone.
+        </p>
+        <form action="/LibroTrack/public/index.php?controller=Transaction&action=destroy" method="POST">
+            <input type="hidden" name="transactionID" id="delete-transactionID">
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button type="submit" class="btn-delete-confirm">🗑️ Yes, Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/LibroTrack/public/assets/js/history.js"></script>
 </body>
 </html>

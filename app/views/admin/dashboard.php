@@ -1,36 +1,39 @@
+<?php
+$stats        = $stats        ?? ['total_books' => 0, 'available_copies' => 0, 'currently_borrowed' => 0, 'overdue' => 0, 'total_borrowers' => 0];
+$transactions = $transactions ?? [];
+$overdueBooks = $overdueBooks ?? [];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LibroTrack — Admin Dashboard</title>
-    <link rel="stylesheet" href="../../../public/assets/css/dashboard.css">
+    <title>LibroTrack — Dashboard</title>
+    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
 </head>
 <body>
 
-<!-- Top Navigation -->
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="../../../public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="admin_dashboard.php" class="active">Dashboard</a></li>
-        <li><a href="book_management.php">Books</a></li>
-        <li><a href="borrowers.php">Borrowers</a></li>
-        <li><a href="borrow.php">Transactions</a></li>
-        <li><a href="overdue.php">Overdue</a></li>
-        <li><a href="reports.php">Reports</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index" class="active">Dashboard</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Book&action=index">Books</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Transaction&action=index">Transactions</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="../login.php" class="nav-logout">Logout</a>
+        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
-<!-- Main Content -->
 <main class="main-content">
 
     <!-- Page Header -->
@@ -39,44 +42,44 @@
             <h1>Dashboard</h1>
             <p class="page-subtitle">Welcome back! Here's what's happening in the library today.</p>
         </div>
-        <div class="header-date"><?php echo date('F d, Y'); ?></div>
+        <div class="header-date"><?= date('F d, Y') ?></div>
     </div>
 
     <!-- Stat Cards -->
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-icon">📖</div>
+            <div class="stat-icon">📚</div>
             <div class="stat-info">
-                <span class="stat-value">1,240</span>
+                <span class="stat-value"><?= number_format($stats['total_books']) ?></span>
                 <span class="stat-label">Total Books</span>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">✅</div>
             <div class="stat-info">
-                <span class="stat-value">983</span>
-                <span class="stat-label">Available</span>
+                <span class="stat-value"><?= number_format($stats['available_copies']) ?></span>
+                <span class="stat-label">Available Copies</span>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">📤</div>
             <div class="stat-info">
-                <span class="stat-value">257</span>
-                <span class="stat-label">Borrowed</span>
+                <span class="stat-value"><?= number_format($stats['currently_borrowed']) ?></span>
+                <span class="stat-label">Currently Borrowed</span>
             </div>
         </div>
         <div class="stat-card stat-card--warning">
             <div class="stat-icon">⚠️</div>
             <div class="stat-info">
-                <span class="stat-value">18</span>
+                <span class="stat-value"><?= number_format($stats['overdue']) ?></span>
                 <span class="stat-label">Overdue</span>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">👥</div>
             <div class="stat-info">
-                <span class="stat-value">412</span>
-                <span class="stat-label">Borrowers</span>
+                <span class="stat-value"><?= number_format($stats['total_borrowers']) ?></span>
+                <span class="stat-label">Registered Borrowers</span>
             </div>
         </div>
     </div>
@@ -88,7 +91,7 @@
         <div class="card">
             <div class="card-head">
                 <h2>Recent Transactions</h2>
-                <a href="transactions.php" class="card-link">View all →</a>
+                <a href="/librotrack/public/index.php?controller=Transaction&action=history" class="card-link">View all →</a>
             </div>
             <table class="data-table">
                 <thead>
@@ -100,36 +103,30 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Juan dela Cruz</td>
-                        <td>Introduction to Computing</td>
-                        <td>Apr 01, 2025</td>
-                        <td><span class="badge badge--borrowed">Borrowed</span></td>
-                    </tr>
-                    <tr>
-                        <td>Maria Santos</td>
-                        <td>Calculus Vol. 2</td>
-                        <td>Mar 30, 2025</td>
-                        <td><span class="badge badge--returned">Returned</span></td>
-                    </tr>
-                    <tr>
-                        <td>Pedro Reyes</td>
-                        <td>Philippine History</td>
-                        <td>Mar 28, 2025</td>
-                        <td><span class="badge badge--overdue">Overdue</span></td>
-                    </tr>
-                    <tr>
-                        <td>Ana Lim</td>
-                        <td>Data Structures</td>
-                        <td>Mar 27, 2025</td>
-                        <td><span class="badge badge--borrowed">Borrowed</span></td>
-                    </tr>
-                    <tr>
-                        <td>Carlo Mendoza</td>
-                        <td>English for Academic</td>
-                        <td>Mar 25, 2025</td>
-                        <td><span class="badge badge--returned">Returned</span></td>
-                    </tr>
+                    <?php if (empty($transactions)): ?>
+                        <tr>
+                            <td colspan="4" style="text-align:center;color:var(--text-muted);padding:1.5rem 0;">
+                                No transactions yet.
+                            </td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($transactions as $t):
+                            $status = $t['displayStatus'];
+                            $badgeClass = match($status) {
+                                'returned' => 'badge--returned',
+                                'overdue'  => 'badge--overdue',
+                                default    => 'badge--borrowed',
+                            };
+                            $badgeLabel = ucfirst($status);
+                        ?>
+                        <tr>
+                            <td><?= htmlspecialchars($t['studentName']) ?></td>
+                            <td><?= htmlspecialchars($t['bookTitle']) ?></td>
+                            <td><?= date('M d, Y', strtotime($t['borrowDate'])) ?></td>
+                            <td><span class="badge <?= $badgeClass ?>"><?= $badgeLabel ?></span></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -141,43 +138,37 @@
             <div class="card card--alert">
                 <div class="card-head">
                     <h2>⚠️ Overdue Books</h2>
-                    <a href="overdue.php" class="card-link">Manage →</a>
+                    <a href="/librotrack/public/index.php?controller=Overdue&action=index" class="card-link">Manage →</a>
                 </div>
+                <?php if (empty($overdueBooks)): ?>
+                    <p style="font-size:0.875rem;color:var(--text-muted);text-align:center;padding:1rem 0;">
+                        🎉 No overdue books right now.
+                    </p>
+                <?php else: ?>
                 <ul class="overdue-list">
+                    <?php foreach ($overdueBooks as $o): ?>
                     <li>
                         <div class="overdue-info">
-                            <span class="overdue-name">Pedro Reyes</span>
-                            <span class="overdue-book">Philippine History</span>
+                            <span class="overdue-name"><?= htmlspecialchars($o['studentName']) ?></span>
+                            <span class="overdue-book"><?= htmlspecialchars($o['bookTitle']) ?></span>
                         </div>
-                        <span class="overdue-days">5 days</span>
+                        <span class="overdue-days">
+                            <?= $o['daysOverdue'] ?> day<?= $o['daysOverdue'] != 1 ? 's' : '' ?>
+                        </span>
                     </li>
-                    <li>
-                        <div class="overdue-info">
-                            <span class="overdue-name">Lea Gomez</span>
-                            <span class="overdue-book">Biology Essentials</span>
-                        </div>
-                        <span class="overdue-days">3 days</span>
-                    </li>
-                    <li>
-                        <div class="overdue-info">
-                            <span class="overdue-name">Ryan Torres</span>
-                            <span class="overdue-book">Physics for Engineers</span>
-                        </div>
-                        <span class="overdue-days">1 day</span>
-                    </li>
+                    <?php endforeach; ?>
                 </ul>
+                <?php endif; ?>
             </div>
 
             <!-- Quick Actions -->
             <div class="card">
-                <div class="card-head">
-                    <h2>Quick Actions</h2>
-                </div>
+                <div class="card-head"><h2>Quick Actions</h2></div>
                 <div class="quick-actions">
-                    <a href="borrow.php" class="action-btn">📤 Borrow Book</a>
-                    <a href="return.php" class="action-btn">📥 Return Book</a>
-                    <a href="book_management.php" class="action-btn">➕ Add Book</a>
-                    <a href="borrowers.php" class="action-btn">👤 Add Borrower</a>
+                    <a href="/librotrack/public/index.php?controller=Transaction&action=index"      class="action-btn">📤 Borrow Book</a>
+                    <a href="/librotrack/public/index.php?controller=Transaction&action=returnPage" class="action-btn">📥 Return Book</a>
+                    <a href="/librotrack/public/index.php?controller=Book&action=index"             class="action-btn">➕ Add Book</a>
+                    <a href="/librotrack/public/index.php?controller=Borrower&action=index"        class="action-btn">👤 Add Borrower</a>
                 </div>
             </div>
 
