@@ -6,10 +6,61 @@ class Book
 {
     private mysqli $db;
 
+    // Upload directory relative to project root (public-accessible)
+    const UPLOAD_DIR  = __DIR__ . "/../../public/assets/img/covers/";
+    const UPLOAD_URL  = "/LibroTrack/public/assets/img/covers/";
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const MAX_SIZE    = 2 * 1024 * 1024; // 2MB
+
     public function __construct()
     {
         $database = new Database();
         $this->db = $database->connect();
+
+        // Make sure the upload directory exists
+        if (!is_dir(self::UPLOAD_DIR)) {
+            mkdir(self::UPLOAD_DIR, 0755, true);
+        }
+    }
+
+    // ── HELPER: Handle cover image upload, returns filename or error string ─
+    private function handleUpload(array $file): string|null|false
+    {
+        // No file uploaded — return null (no image)
+        if ($file['error'] === UPLOAD_ERR_NO_FILE || empty($file['name'])) {
+            return null;
+        }
+
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            return "Image upload failed (error code {$file['error']}).";
+        }
+
+        if ($file['size'] > self::MAX_SIZE) {
+            return "Image must be 2MB or smaller.";
+        }
+
+        if (!in_array($file['type'], self::ALLOWED_TYPES)) {
+            return "Only JPG, PNG, GIF, and WEBP images are allowed.";
+        }
+
+        $ext      = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = uniqid('cover_', true) . '.' . strtolower($ext);
+        $dest     = self::UPLOAD_DIR . $filename;
+
+        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+            return "Failed to save the uploaded image.";
+        }
+
+        return $filename;
+    }
+
+    // ── HELPER: Delete an old cover image file ─────────────────────────────
+    private function deleteImage(string $filename): void
+    {
+        $path = self::UPLOAD_DIR . $filename;
+        if ($filename && file_exists($path)) {
+            unlink($path);
+        }
     }
 
     // ── READ: Get all books with available copies ──────────────────────────
@@ -51,6 +102,7 @@ class Book
                 b.copies,
                 b.location,
                 b.description,
+                b.cover_image,
                 b.dateAdded,
                 (b.copies - COALESCE(
                     (SELECT COUNT(*) FROM tbl_transaction t
@@ -110,7 +162,7 @@ class Book
     }
 
     // ── CREATE ─────────────────────────────────────────────────────────────
-    public function create(array $data): bool|string
+    public function create(array $data, array $file = []): bool|string
     {
         if (!empty($data['isbn'])) {
             $chk = $this->db->prepare("SELECT bookID FROM tbl_books WHERE isbn = ?");
@@ -119,6 +171,16 @@ class Book
             if ($chk->get_result()->num_rows > 0) {
                 return "A book with this ISBN already exists.";
             }
+        }
+
+        // Handle image upload
+        $cover = null;
+        if (!empty($file['name'])) {
+            $result = $this->handleUpload($file);
+            if (is_string($result) && !empty($result) && !file_exists(self::UPLOAD_DIR . $result)) {
+                return $result; // upload error message
+            }
+            $cover = $result;
         }
 
         $title    = trim($data['title']);
@@ -130,15 +192,15 @@ class Book
         $desc     = !empty($data['description']) ? trim($data['description']) : null;
 
         $stmt = $this->db->prepare(
-            "INSERT INTO tbl_books (title, author, isbn, genre, copies, location, description)
-             VALUES (?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO tbl_books (title, author, isbn, genre, copies, location, description, cover_image)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         );
-        $stmt->bind_param('ssssiss', $title, $author, $isbn, $genre, $copies, $location, $desc);
+        $stmt->bind_param('ssssisss', $title, $author, $isbn, $genre, $copies, $location, $desc, $cover);
         return $stmt->execute() ? true : $this->db->error;
     }
 
     // ── UPDATE ─────────────────────────────────────────────────────────────
-    public function update(int $id, array $data): bool|string
+    public function update(int $id, array $data, array $file = []): bool|string
     {
         if (!empty($data['isbn'])) {
             $chk = $this->db->prepare("SELECT bookID FROM tbl_books WHERE isbn = ? AND bookID != ?");
@@ -149,7 +211,6 @@ class Book
             }
         }
 
-        // Guard: copies cannot be less than currently borrowed
         $chk2 = $this->db->prepare(
             "SELECT COUNT(*) AS cnt FROM tbl_transaction WHERE bookID = ? AND status = 'borrowed'"
         );
@@ -159,6 +220,28 @@ class Book
         if ((int)$data['copies'] < $borrowed) {
             return "Cannot set copies to {$data['copies']} — {$borrowed} " .
                    ($borrowed === 1 ? 'copy is' : 'copies are') . " currently borrowed.";
+        }
+
+        // Handle image upload — only replace if a new one is uploaded
+        $existing = $this->getById($id);
+        $cover    = $existing['cover_image'] ?? null; // keep old by default
+
+        if (!empty($file['name'])) {
+            $result = $this->handleUpload($file);
+            if (is_string($result) && !file_exists(self::UPLOAD_DIR . $result)) {
+                return $result; // upload error message
+            }
+            // Delete old image if it existed
+            if ($cover) {
+                $this->deleteImage($cover);
+            }
+            $cover = $result;
+        }
+
+        // Allow removing the image via a checkbox (value='1' when checked)
+        if (isset($data['remove_image']) && $data['remove_image'] === '1') {
+            if ($cover) $this->deleteImage($cover);
+            $cover = null;
         }
 
         $title    = trim($data['title']);
@@ -171,10 +254,10 @@ class Book
 
         $stmt = $this->db->prepare(
             "UPDATE tbl_books
-             SET title=?, author=?, isbn=?, genre=?, copies=?, location=?, description=?
+             SET title=?, author=?, isbn=?, genre=?, copies=?, location=?, description=?, cover_image=?
              WHERE bookID=?"
         );
-        $stmt->bind_param('ssssissi', $title, $author, $isbn, $genre, $copies, $location, $desc, $id);
+        $stmt->bind_param('ssssisssi', $title, $author, $isbn, $genre, $copies, $location, $desc, $cover, $id);
         return $stmt->execute() ? true : $this->db->error;
     }
 
@@ -189,6 +272,12 @@ class Book
         $cnt = (int) $chk->get_result()->fetch_assoc()['cnt'];
         if ($cnt > 0) {
             return "Cannot delete — {$cnt} " . ($cnt === 1 ? 'copy is' : 'copies are') . " currently borrowed.";
+        }
+
+        // Delete cover image file if it exists
+        $book = $this->getById($id);
+        if ($book && $book['cover_image']) {
+            $this->deleteImage($book['cover_image']);
         }
 
         $stmt = $this->db->prepare("DELETE FROM tbl_books WHERE bookID = ?");
