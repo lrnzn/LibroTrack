@@ -1,38 +1,41 @@
+<?php
+$error = $_GET['error'] ?? '';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Sign Up</title>
-    <link rel="stylesheet" href="../../public/assets/css/login.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/login.css">
 </head>
 <body>
 
 <div class="page-wrapper">
 
     <div class="left-panel">
-        <img src="../../public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
         <h1>LibroTrack</h1>
         <p>Manage your library with ease. Track books, borrowers, and transactions in one place.</p>
     </div>
 
-    <!-- RIGHT PANEL -->
     <div class="right-panel">
-
         <div class="login-card">
+
             <h2>Create Account</h2>
             <p class="subtitle">Sign up to access the library system</p>
 
-            <form action="/LibroTrack/public/index.php?controller=Auth&action=register" method="POST">
+            <?php if (!empty($error)): ?>
+                <p class="login-error">❌ <?= htmlspecialchars($error) ?></p>
+            <?php endif; ?>
 
-                <!-- Student Info -->
-                
+            <form action="/librotrack/public/index.php?controller=Auth&action=store" method="POST">
+
                 <div class="form-row">
                     <div class="form-group">
                         <label>First Name</label>
                         <input type="text" name="fname" placeholder="Enter your first name" required>
                     </div>
-
                     <div class="form-group">
                         <label>Middle Name</label>
                         <input type="text" name="mname" placeholder="Enter your middle name">
@@ -44,52 +47,71 @@
                         <label>Last Name</label>
                         <input type="text" name="lname" placeholder="Enter your last name" required>
                     </div>
-
                     <div class="form-group">
                         <label>Ext.</label>
-                        <input type="text" name="nameExt" placeholder="Ex: Jr.">
+                        <input type="text" name="nameExt" placeholder="e.g. Jr.">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>Student ID</label>
-                    <input type="text" name="student_id" placeholder="Enter your student ID" required>
+                    <input type="text" name="studentNumber" placeholder="e.g. ABC01234567" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Course / Year</label>
-                    <input type="text" name="course_year" placeholder="e.g. BSIT - 2nd Year">
+                    <label>Course</label>
+                    <select name="course" required>
+                        <option value="">Select course</option>
+                        <option>BSIT</option>
+                        <option>BSIS</option>
+                        <option>BIT</option>
+                        <option>BTVTED</option>
+                        <option>BSECE</option>
+                        <option>BSCpE</option>
+                        <option>Other</option>
+                    </select>
                 </div>
 
-                <!-- Account Info -->
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                </div>
+
                 <div class="form-group">
                     <label>Username</label>
                     <input type="text" name="username" placeholder="Choose a username" required>
                 </div>
 
-                <div class="form-group password-wrapper">
+                <div class="form-group">
                     <label>Password</label>
-                    <input type="password" name="password" placeholder="Enter password" required>
+                    <div class="password-wrapper">
+                        <input type="password" name="password" id="password" placeholder="Enter password" required>
+                        <button type="button" class="toggle-password" onclick="toggleSignupPassword()">👁</button>
+                    </div>
                 </div>
 
-                <div class="form-group password-wrapper">
+                <div class="form-group">
                     <label>Confirm Password</label>
-                    <input type="password" name="confirm_password" placeholder="Confirm password" required>
+                    <div class="password-wrapper">
+                        <input type="password" name="confirm_password" id="confirm-password"
+                               placeholder="Confirm password" required>
+                    </div>
                 </div>
 
                 <button type="submit" class="login-btn">Sign Up</button>
 
-                <div class="register-prompt">
+                <p class="register-prompt">
                     Already have an account?
-                    <a href="login.php">Login</a>
-                </div>
+                    <a href="/librotrack/public/index.php?controller=Auth&action=login">Sign in here</a>
+                </p>
 
             </form>
         </div>
-
     </div>
 
 </div>
+
+<script src="/librotrack/public/assets/js/signup.js"></script>
 
 </body>
 </html>
