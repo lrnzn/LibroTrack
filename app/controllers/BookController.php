@@ -69,7 +69,8 @@ class BookController
             $this->redirect("/LibroTrack/public/index.php?controller=Book&action=index");
         }
 
-        $result = $this->book->create($_POST);
+        $file   = $_FILES['cover_image'] ?? [];
+        $result = $this->book->create($_POST, $file);
 
         if ($result === true) {
             $this->redirect("/LibroTrack/public/index.php?controller=Book&action=index&flash=Book+added+successfully.&flash_type=success&flash_action=added");
@@ -99,7 +100,8 @@ class BookController
         }
 
         $id     = (int)($_POST['bookID'] ?? 0);
-        $result = $this->book->update($id, $_POST);
+        $file   = $_FILES['cover_image'] ?? [];
+        $result = $this->book->update($id, $_POST, $file);
 
         if ($result === true) {
             $this->redirect("/LibroTrack/public/index.php?controller=Book&action=index&flash=Book+updated+successfully.&flash_type=success&flash_action=updated");
