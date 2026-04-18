@@ -1,92 +1,137 @@
+<?php
+// Safe defaults
+$borrowers    = $borrowers    ?? [];
+$courses      = $courses      ?? [];
+$stats        = $stats        ?? ['total_borrowers' => 0, 'currently_borrowing' => 0, 'with_overdue' => 0];
+$search       = $search       ?? '';
+$course       = $course       ?? '';
+$status       = $status       ?? '';
+$flash        = $flash        ?? '';
+$flash_type   = $flash_type   ?? 'success';
+$flash_action = $flash_action ?? '';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Borrower Management</title>
-    <link rel="stylesheet" href="../../../public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="../../../public/assets/css/books.css">
-    <link rel="stylesheet" href="../../../public/assets/css/borrowers.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/LibroTrack/public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/LibroTrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="/LibroTrack/public/assets/css/borrower_management.css">
 </head>
 <body>
 
+<!-- Toast -->
+<?php if (!empty($flash)): ?>
+<div class="toast toast--<?= htmlspecialchars($flash_type) ?>">
+    <?= $flash_type === 'success' ? '✅' : '❌' ?>
+    <?= htmlspecialchars($flash) ?>
+</div>
+<?php endif; ?>
+
+<!-- Navbar -->
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="../../../public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="/LibroTrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="dashboard.php">Dashboard</a></li>
-        <li><a href="book_management.php">Books</a></li>
-        <li><a href="borrowers.php" class="active">Borrowers</a></li>
-        <li><a href="borrow.php">Transactions</a></li>
-        <li><a href="overdue.php">Overdue</a></li>
-        <li><a href="reports.php">Reports</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Book&action=index">Books</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Borrower&action=index" class="active">Borrowers</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Transaction&action=index">Transactions</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="../login.php" class="nav-logout">Logout</a>
+        <a href="/LibroTrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
 <main class="main-content">
 
+    <!-- Page Header -->
     <div class="page-header">
         <div>
             <h1>Borrower Management</h1>
             <p class="page-subtitle">Manage registered student borrowers.</p>
         </div>
-        <button class="btn-primary" onclick="openModal()">➕ Add Borrower</button>
+        <div class="header-actions">
+            <button class="btn-primary" onclick="openAddModal()">➕ Add Borrower</button>
+        </div>
     </div>
 
     <!-- Stats -->
-    <div class="stats-grid" style="grid-template-columns: repeat(3,1fr); margin-bottom:1.5rem;">
+    <div class="stats-row">
         <div class="stat-card">
             <div class="stat-icon">👥</div>
-            <div class="stat-info">
-                <span class="stat-value">412</span>
-                <span class="stat-label">Total Borrowers</span>
+            <div>
+                <div class="stat-value"><?= number_format($stats['total_borrowers']) ?></div>
+                <div class="stat-label">Total Borrowers</div>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">📤</div>
-            <div class="stat-info">
-                <span class="stat-value">87</span>
-                <span class="stat-label">Currently Borrowing</span>
+            <div>
+                <div class="stat-value"><?= number_format($stats['currently_borrowing']) ?></div>
+                <div class="stat-label">Currently Borrowing</div>
             </div>
         </div>
         <div class="stat-card stat-card--warning">
             <div class="stat-icon">⚠️</div>
-            <div class="stat-info">
-                <span class="stat-value">18</span>
-                <span class="stat-label">With Overdue Books</span>
+            <div>
+                <div class="stat-value"><?= number_format($stats['with_overdue']) ?></div>
+                <div class="stat-label">With Overdue Books</div>
             </div>
         </div>
     </div>
 
-    <!-- Search -->
-    <div class="toolbar">
-        <input type="text" class="search-input" placeholder="🔍 Search by name, student number, or course...">
-        <select class="filter-select">
+    <!-- Search & Filter -->
+    <form class="toolbar search-form" method="GET" action="/LibroTrack/public/index.php">
+        <input type="hidden" name="controller" value="Borrower">
+        <input type="hidden" name="action"     value="index">
+        <input type="text" name="search" class="search-input"
+               placeholder="🔍 Search by name, student number, or email..."
+               value="<?= htmlspecialchars($search) ?>">
+        <select name="course" class="filter-select" onchange="this.form.submit()">
             <option value="">All Courses</option>
-            <option>BSIT</option>
-            <option>BSCS</option>
-            <option>BSED</option>
-            <option>BSBA</option>
-            <option>BSME</option>
-            <option>BSECE</option>
+            <?php foreach ($courses as $c): ?>
+                <option value="<?= htmlspecialchars($c) ?>" <?= $course === $c ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($c) ?>
+                </option>
+            <?php endforeach; ?>
         </select>
-        <select class="filter-select">
+        <select name="status" class="filter-select" onchange="this.form.submit()">
             <option value="">All Status</option>
-            <option>Active</option>
-            <option>With Overdue</option>
+            <option value="active"  <?= $status === 'active'  ? 'selected' : '' ?>>Currently Borrowing</option>
+            <option value="overdue" <?= $status === 'overdue' ? 'selected' : '' ?>>With Overdue</option>
+            <option value="clean"   <?= $status === 'clean'   ? 'selected' : '' ?>>No Active Borrows</option>
         </select>
-    </div>
+        <button type="submit" class="btn-primary">Search</button>
+        <?php if ($search || $course || $status): ?>
+            <a href="/LibroTrack/public/index.php?controller=Borrower&action=index"
+               class="btn-cancel" style="text-decoration:none;">✕ Clear</a>
+        <?php endif; ?>
+    </form>
 
     <!-- Table -->
     <div class="card">
+        <?php if (empty($borrowers)): ?>
+            <div class="empty-state">
+                <div class="empty-icon">👤</div>
+                <p>No borrowers found<?= $search || $course || $status ? ' matching your filters' : '' ?>.</p>
+                <?php if (!$search && !$course && !$status): ?>
+                    <button class="btn-primary" onclick="openAddModal()">➕ Add First Borrower</button>
+                <?php endif; ?>
+            </div>
+        <?php else: ?>
         <table class="data-table">
             <thead>
                 <tr>
@@ -101,132 +146,87 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Juan dela Cruz</td>
-                    <td>2021-00123</td>
-                    <td>BSIT</td>
-                    <td>juan.delacruz@email.com</td>
-                    <td>2</td>
-                    <td><span class="badge badge--borrowed">Active</span></td>
+                <?php foreach ($borrowers as $i => $b):
+                    $active  = (int) $b['active_borrows'];
+                    $overdue = (int) $b['overdue_count'];
+                    if ($overdue > 0) {
+                        $badgeClass = 'badge--overdue';
+                        $badgeLabel = 'Overdue';
+                    } elseif ($active > 0) {
+                        $badgeClass = 'badge--borrowed';
+                        $badgeLabel = 'Active';
+                    } else {
+                        $badgeClass = 'badge--returned';
+                        $badgeLabel = 'No Borrow';
+                    }
+                    $isNew = $flash_action === 'added' && $i === 0;
+                    $fullName = htmlspecialchars($b['fname'] . ' ' . $b['lname'] . ($b['nameExt'] ? ' ' . $b['nameExt'] : ''));
+                ?>
+                <tr id="row-<?= $b['studentID'] ?>" <?= $isNew ? 'class="highlight-row"' : '' ?>>
+                    <td><?= $i + 1 ?></td>
+                    <td><strong><?= $fullName ?></strong></td>
+                    <td class="student-number"><?= htmlspecialchars($b['studentNumber']) ?></td>
+                    <td><?= htmlspecialchars($b['course']) ?></td>
+                    <td><?= htmlspecialchars($b['email']) ?></td>
+                    <td><?= $active ?></td>
+                    <td><span class="badge <?= $badgeClass ?>"><?= $badgeLabel ?></span></td>
                     <td class="action-col">
-                        <button class="btn-edit" onclick="openModal('edit')">✏️ Edit</button>
-                        <button class="btn-edit" onclick="viewBorrower()" style="background:#E8F5EE;color:#2E7D52;">👁 View</button>
-                        <button class="btn-delete" onclick="confirmDelete()">🗑️</button>
+                        <button class="btn-view"   onclick="openViewModal(<?= $b['studentID'] ?>)">👁 View</button>
+                        <button class="btn-edit"   onclick="openEditModal(<?= $b['studentID'] ?>)">✏️ Edit</button>
+                        <button class="btn-delete" onclick="openDeleteModal(<?= $b['studentID'] ?>, '<?= addslashes($fullName) ?>')">🗑️ Delete</button>
                     </td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Maria Santos</td>
-                    <td>2021-00456</td>
-                    <td>BSCS</td>
-                    <td>maria.santos@email.com</td>
-                    <td>0</td>
-                    <td><span class="badge badge--returned">No Borrow</span></td>
-                    <td class="action-col">
-                        <button class="btn-edit" onclick="openModal('edit')">✏️ Edit</button>
-                        <button class="btn-edit" onclick="viewBorrower()" style="background:#E8F5EE;color:#2E7D52;">👁 View</button>
-                        <button class="btn-delete" onclick="confirmDelete()">🗑️</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Pedro Reyes</td>
-                    <td>2020-00789</td>
-                    <td>BSED</td>
-                    <td>pedro.reyes@email.com</td>
-                    <td>1</td>
-                    <td><span class="badge badge--overdue">Overdue</span></td>
-                    <td class="action-col">
-                        <button class="btn-edit" onclick="openModal('edit')">✏️ Edit</button>
-                        <button class="btn-edit" onclick="viewBorrower()" style="background:#E8F5EE;color:#2E7D52;">👁 View</button>
-                        <button class="btn-delete" onclick="confirmDelete()">🗑️</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Ana Lim</td>
-                    <td>2022-00321</td>
-                    <td>BSBA</td>
-                    <td>ana.lim@email.com</td>
-                    <td>1</td>
-                    <td><span class="badge badge--borrowed">Active</span></td>
-                    <td class="action-col">
-                        <button class="btn-edit" onclick="openModal('edit')">✏️ Edit</button>
-                        <button class="btn-edit" onclick="viewBorrower()" style="background:#E8F5EE;color:#2E7D52;">👁 View</button>
-                        <button class="btn-delete" onclick="confirmDelete()">🗑️</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td>Carlo Mendoza</td>
-                    <td>2023-00654</td>
-                    <td>BSIT</td>
-                    <td>carlo.mendoza@email.com</td>
-                    <td>0</td>
-                    <td><span class="badge badge--returned">No Borrow</span></td>
-                    <td class="action-col">
-                        <button class="btn-edit" onclick="openModal('edit')">✏️ Edit</button>
-                        <button class="btn-edit" onclick="viewBorrower()" style="background:#E8F5EE;color:#2E7D52;">👁 View</button>
-                        <button class="btn-delete" onclick="confirmDelete()">🗑️</button>
-                    </td>
-                </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
-
         <div class="pagination">
-            <span class="pagination-info">Showing 1–5 of 412 borrowers</span>
-            <div class="pagination-controls">
-                <button class="page-btn" disabled>← Prev</button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">2</button>
-                <button class="page-btn">3</button>
-                <span>...</span>
-                <button class="page-btn">83</button>
-                <button class="page-btn">Next →</button>
-            </div>
+            <span class="pagination-info">
+                Showing <?= count($borrowers) ?> borrower<?= count($borrowers) !== 1 ? 's' : '' ?>
+                <?= $search || $course || $status ? 'matching your filters' : 'total' ?>
+            </span>
         </div>
+        <?php endif; ?>
     </div>
 
 </main>
 
-<!-- Add/Edit Modal -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModal()"></div>
-<div class="modal" id="modal">
+<!-- ════════════════════════════ ADD MODAL ════════════════════════════ -->
+<div class="modal-overlay" id="add-overlay" onclick="closeAddModal()"></div>
+<div class="modal" id="add-modal">
     <div class="modal-header">
-        <h2 id="modal-title">Add Borrower</h2>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+        <h2>➕ Add Borrower</h2>
+        <button class="modal-close" onclick="closeAddModal()">✕</button>
     </div>
     <div class="modal-body">
-        <form action="#" method="POST">
+        <form action="/LibroTrack/public/index.php?controller=Borrower&action=store" method="POST">
             <div class="form-row">
                 <div class="form-group">
-                    <label>First Name</label>
-                    <input type="text" placeholder="Enter first name">
+                    <label>First Name *</label>
+                    <input type="text" name="fname" placeholder="Enter first name" required>
                 </div>
                 <div class="form-group">
                     <label>Middle Name</label>
-                    <input type="text" placeholder="Enter middle name">
+                    <input type="text" name="mname" placeholder="Enter middle name">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Last Name</label>
-                    <input type="text" placeholder="Enter last name">
+                    <label>Last Name *</label>
+                    <input type="text" name="lname" placeholder="Enter last name" required>
                 </div>
                 <div class="form-group">
                     <label>Name Extension</label>
-                    <input type="text" placeholder="e.g. Jr., Sr., III">
+                    <input type="text" name="nameExt" placeholder="e.g. Jr., Sr., III">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Student Number</label>
-                    <input type="text" placeholder="e.g. 2021-00123">
+                    <label>Student Number *</label>
+                    <input type="text" name="studentNumber" placeholder="e.g. 2021-00123" required>
                 </div>
                 <div class="form-group">
-                    <label>Course</label>
-                    <select>
+                    <label>Course *</label>
+                    <select name="course" required>
                         <option value="">Select course</option>
                         <option>BSIT</option>
                         <option>BSCS</option>
@@ -234,109 +234,123 @@
                         <option>BSBA</option>
                         <option>BSME</option>
                         <option>BSECE</option>
+                        <option>BSN</option>
+                        <option>BSED</option>
+                        <option>BSCRIM</option>
+                        <option>Other</option>
                     </select>
                 </div>
             </div>
             <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" placeholder="Enter email address">
+                <label>Email Address *</label>
+                <input type="email" name="email" placeholder="Enter email address" required>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-                <button type="submit" class="btn-primary">Save Borrower</button>
+                <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+                <button type="submit" class="btn-primary">💾 Save Borrower</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- View Borrower Modal -->
-<div class="modal-overlay" id="view-overlay" onclick="closeView()"></div>
+<!-- ════════════════════════════ VIEW MODAL ═══════════════════════════ -->
+<div class="modal-overlay" id="view-overlay" onclick="closeViewModal()"></div>
 <div class="modal" id="view-modal">
     <div class="modal-header">
-        <h2>Borrower Details</h2>
-        <button class="modal-close" onclick="closeView()">✕</button>
+        <h2>👤 Borrower Details</h2>
+        <button class="modal-close" onclick="closeViewModal()">✕</button>
     </div>
-    <div class="modal-body">
-        <div class="borrower-profile">
-            <div class="borrower-avatar">👤</div>
-            <div class="borrower-details">
-                <h3>Juan dela Cruz</h3>
-                <p>2021-00123 &nbsp;|&nbsp; BSIT</p>
-                <p>juan.delacruz@email.com</p>
-            </div>
-        </div>
-        <div class="borrower-stats">
-            <div class="b-stat"><span>2</span><small>Active Borrows</small></div>
-            <div class="b-stat"><span>14</span><small>Total Borrowed</small></div>
-            <div class="b-stat b-stat--warn"><span>1</span><small>Overdue</small></div>
-        </div>
-        <h4 style="margin: 1rem 0 0.5rem; font-family: 'Playfair Display', serif; font-size:1rem;">Current Borrows</h4>
-        <table class="data-table">
-            <thead>
-                <tr><th>Book Title</th><th>Due Date</th><th>Status</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Introduction to Computing</td>
-                    <td>Apr 08, 2025</td>
-                    <td><span class="badge badge--borrowed">Borrowed</span></td>
-                </tr>
-                <tr>
-                    <td>Philippine History</td>
-                    <td>Apr 03, 2025</td>
-                    <td><span class="badge badge--overdue">Overdue</span></td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="modal-footer">
-            <button class="btn-cancel" onclick="closeView()">Close</button>
-        </div>
+    <div class="modal-body" id="view-modal-body">
+        <p>Loading...</p>
     </div>
 </div>
 
-<!-- Delete Modal -->
-<div class="modal-overlay" id="delete-overlay" onclick="closeDelete()"></div>
+<!-- ════════════════════════════ EDIT MODAL ═══════════════════════════ -->
+<div class="modal-overlay" id="edit-overlay" onclick="closeEditModal()"></div>
+<div class="modal" id="edit-modal">
+    <div class="modal-header">
+        <h2>✏️ Edit Borrower</h2>
+        <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+        <form action="/LibroTrack/public/index.php?controller=Borrower&action=update" method="POST">
+            <input type="hidden" name="studentID" id="edit-studentID">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name *</label>
+                    <input type="text" name="fname" id="edit-fname" placeholder="Enter first name" required>
+                </div>
+                <div class="form-group">
+                    <label>Middle Name</label>
+                    <input type="text" name="mname" id="edit-mname" placeholder="Enter middle name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Last Name *</label>
+                    <input type="text" name="lname" id="edit-lname" placeholder="Enter last name" required>
+                </div>
+                <div class="form-group">
+                    <label>Name Extension</label>
+                    <input type="text" name="nameExt" id="edit-nameExt" placeholder="e.g. Jr., Sr., III">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student Number *</label>
+                    <input type="text" name="studentNumber" id="edit-studentNumber" placeholder="e.g. 2021-00123" required>
+                </div>
+                <div class="form-group">
+                    <label>Course *</label>
+                    <select name="course" id="edit-course" required>
+                        <option value="">Select course</option>
+                        <option>BSIT</option>
+                        <option>BSCS</option>
+                        <option>BSED</option>
+                        <option>BSBA</option>
+                        <option>BSME</option>
+                        <option>BSECE</option>
+                        <option>BSN</option>
+                        <option>BSCRIM</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Email Address *</label>
+                <input type="email" name="email" id="edit-email" placeholder="Enter email address" required>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+                <button type="submit" class="btn-primary">💾 Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ═══════════════════════════ DELETE MODAL ══════════════════════════ -->
+<div class="modal-overlay" id="delete-overlay" onclick="closeDeleteModal()"></div>
 <div class="modal modal--sm" id="delete-modal">
     <div class="modal-header">
-        <h2>Remove Borrower</h2>
-        <button class="modal-close" onclick="closeDelete()">✕</button>
+        <h2>🗑️ Remove Borrower</h2>
+        <button class="modal-close" onclick="closeDeleteModal()">✕</button>
     </div>
     <div class="modal-body">
-        <p class="delete-msg">Are you sure you want to remove <strong>Juan dela Cruz</strong> from the system? This action cannot be undone.</p>
-        <div class="modal-footer">
-            <button class="btn-cancel" onclick="closeDelete()">Cancel</button>
-            <button class="btn-delete-confirm">🗑️ Remove</button>
-        </div>
+        <p class="delete-msg">
+            Are you sure you want to remove <strong id="delete-borrower-name"></strong> from the system?
+            This action cannot be undone.
+        </p>
+        <form action="/LibroTrack/public/index.php?controller=Borrower&action=destroy" method="POST">
+            <input type="hidden" name="studentID" id="delete-studentID">
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button type="submit" class="btn-delete-confirm">🗑️ Yes, Remove</button>
+            </div>
+        </form>
     </div>
 </div>
 
-<script>
-    function openModal(mode = 'add') {
-        document.getElementById('modal-title').textContent = mode === 'edit' ? 'Edit Borrower' : 'Add Borrower';
-        document.getElementById('modal-overlay').classList.add('active');
-        document.getElementById('modal').classList.add('active');
-    }
-    function closeModal() {
-        document.getElementById('modal-overlay').classList.remove('active');
-        document.getElementById('modal').classList.remove('active');
-    }
-    function viewBorrower() {
-        document.getElementById('view-overlay').classList.add('active');
-        document.getElementById('view-modal').classList.add('active');
-    }
-    function closeView() {
-        document.getElementById('view-overlay').classList.remove('active');
-        document.getElementById('view-modal').classList.remove('active');
-    }
-    function confirmDelete() {
-        document.getElementById('delete-overlay').classList.add('active');
-        document.getElementById('delete-modal').classList.add('active');
-    }
-    function closeDelete() {
-        document.getElementById('delete-overlay').classList.remove('active');
-        document.getElementById('delete-modal').classList.remove('active');
-    }
-</script>
+<script src="/LibroTrack/public/assets/js/borrower_management.js"></script>
 
 </body>
 </html>

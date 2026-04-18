@@ -1,33 +1,43 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Book Management</title>
-    <link rel="stylesheet" href="../../../public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="../../../public/assets/css/books.css">
+    <link rel="stylesheet" href="/LibroTrack/public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/LibroTrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="/LibroTrack/public/assets/css/book_management.css">
 </head>
 <body>
 
-<!-- Top Navigation -->
+<!-- Toast Notification -->
+<?php if (!empty($flash)): ?>
+<div class="toast toast--<?= htmlspecialchars($flash_type) ?>">
+    <?= $flash_type === 'success' ? '✅' : '❌' ?>
+    <?= htmlspecialchars($flash) ?>
+</div>
+<?php endif; ?>
+
+<!-- Navbar -->
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="../../../public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="/LibroTrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="dashboard.php">Dashboard</a></li>
-        <li><a href="book_management.php" class="active">Books</a></li>
-        <li><a href="borrowers.php">Borrowers</a></li>
-        <li><a href="borrow.php">Transactions</a></li>
-        <li><a href="overdue.php">Overdue</a></li>
-        <li><a href="reports.php">Reports</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Book&action=index" class="active">Books</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Transaction&action=index">Transactions</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="/LibroTrack/public/index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="../login.php" class="nav-logout">Logout</a>
+        <a href="/LibroTrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -39,37 +49,85 @@
             <h1>Book Management</h1>
             <p class="page-subtitle">Add, edit, or remove books from the library catalog.</p>
         </div>
-
-            <button class="btn-primary" onclick="openModal()">➕ Add New Book</button>
-
+        <div class="header-actions">
+            <button class="btn-primary" onclick="openAddModal()">➕ Add New Book</button>
             <div class="view-toggle">
-                <a href="book_management.php" class="view-btn active">📋 Management</a>
-                <a href="book_catalog.php" class="view-btn">📚 Catalog</a>
+                <a href="/LibroTrack/public/index.php?controller=Book&action=index" class="view-btn active">📋 Management</a>
+                <a href="/LibroTrack/public/index.php?controller=Book&action=catalog" class="view-btn">📚 Catalog</a>
             </div>
-</div>
+        </div>
     </div>
 
-    <!-- Search & Filter Bar -->
-    <div class="toolbar">
-        <input type="text" class="search-input" placeholder="🔍 Search by title, author, or ISBN...">
-        <select class="filter-select">
-            <option value="">All Genres</option>
-            <option>Science & Technology</option>
-            <option>History</option>
-            <option>Literature</option>
-            <option>Mathematics</option>
-            <option>Engineering</option>
-            <option>Social Science</option>
-        </select>
-        <select class="filter-select">
-            <option value="">All Status</option>
-            <option>Available</option>
-            <option>Borrowed</option>
-        </select>
+    <!-- Stats Row -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div>
+                <div class="stat-value"><?= number_format($stats['total_books']) ?></div>
+                <div class="stat-label">Total Titles</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div>
+                <div class="stat-value"><?= number_format($stats['total_copies']) ?></div>
+                <div class="stat-label">Total Copies</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div>
+                <div class="stat-value"><?= number_format($stats['available_copies']) ?></div>
+                <div class="stat-label">Available Copies</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📤</div>
+            <div>
+                <div class="stat-value"><?= number_format($stats['currently_borrowed']) ?></div>
+                <div class="stat-label">Currently Borrowed</div>
+            </div>
+        </div>
     </div>
+
+    <!-- Search & Filter -->
+    <form class="toolbar search-form" method="GET" action="/LibroTrack/public/index.php">
+        <input type="hidden" name="controller" value="Book">
+        <input type="hidden" name="action"     value="index">
+        <input type="text" name="search" class="search-input"
+               placeholder="🔍 Search by title, author, or ISBN..."
+               value="<?= htmlspecialchars($search) ?>">
+        <select name="genre" class="filter-select" onchange="this.form.submit()">
+            <option value="">All Genres</option>
+            <?php foreach ($genres as $g): ?>
+                <option value="<?= htmlspecialchars($g) ?>" <?= $genre === $g ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($g) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <select name="status" class="filter-select" onchange="this.form.submit()">
+            <option value="">All Status</option>
+            <option value="available" <?= $status === 'available' ? 'selected' : '' ?>>Available</option>
+            <option value="borrowed"  <?= $status === 'borrowed'  ? 'selected' : '' ?>>Fully Borrowed</option>
+        </select>
+        <button type="submit" class="btn-primary">Search</button>
+        <?php if ($search || $genre || $status): ?>
+            <a href="/LibroTrack/public/index.php?controller=Book&action=index"
+               class="btn-cancel" style="text-decoration:none;">✕ Clear</a>
+        <?php endif; ?>
+    </form>
 
     <!-- Books Table -->
     <div class="card">
+        <?php if (empty($books)): ?>
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <p>No books found<?= $search || $genre || $status ? ' matching your filters' : '' ?>.</p>
+                <?php if (!$search && !$genre && !$status): ?>
+                    <button class="btn-primary" onclick="openAddModal()">➕ Add Your First Book</button>
+                <?php endif; ?>
+            </div>
+        <?php else: ?>
         <table class="data-table">
             <thead>
                 <tr>
@@ -78,114 +136,65 @@
                     <th>Author</th>
                     <th>Genre</th>
                     <th>ISBN</th>
+                    <th>Location</th>
                     <th>Copies</th>
                     <th>Available</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Introduction to Computing</td>
-                    <td>Peter Norton</td>
-                    <td>Science & Technology</td>
-                    <td>978-0-07-352702-4</td>
-                    <td>5</td>
-                    <td><span class="badge badge--returned">4</span></td>
+                <?php foreach ($books as $i => $book):
+                    $avail      = (int) $book['available'];
+                    $copies     = (int) $book['copies'];
+                    $badgeClass = $avail === 0 ? 'badge--overdue' : ($avail <= 1 ? 'badge--borrowed' : 'badge--returned');
+                    $isNew      = $flash_action === 'added' && $i === 0;
+                ?>
+                <tr id="row-<?= $book['bookID'] ?>" <?= $isNew ? 'class="highlight-row"' : '' ?>>
+                    <td><?= $i + 1 ?></td>
+                    <td><strong><?= htmlspecialchars($book['title']) ?></strong></td>
+                    <td><?= htmlspecialchars($book['author']) ?></td>
+                    <td><?= htmlspecialchars($book['genre']) ?></td>
+                    <td class="isbn-cell"><?= htmlspecialchars($book['isbn'] ?? '—') ?></td>
+                    <td class="location-cell"><?= htmlspecialchars($book['location'] ?? '—') ?></td>
+                    <td class="copies-cell"><?= $copies ?></td>
+                    <td><span class="badge <?= $badgeClass ?>"><?= $avail ?> / <?= $copies ?></span></td>
                     <td class="action-col">
-                        <button class="btn-edit" onclick="openModal('edit')">✏️ Edit</button>
-                        <button class="btn-delete" onclick="confirmDelete()">🗑️ Delete</button>
+                        <button class="btn-view"   onclick="openViewModal(<?= $book['bookID'] ?>)">👁 View</button>
+                        <button class="btn-edit"   onclick="openEditModal(<?= $book['bookID'] ?>)">✏️ Edit</button>
+                        <button class="btn-delete" onclick="openDeleteModal(<?= $book['bookID'] ?>, '<?= addslashes(htmlspecialchars($book['title'])) ?>')">🗑️ Delete</button>
                     </td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Calculus Vol. 2</td>
-                    <td>James Stewart</td>
-                    <td>Mathematics</td>
-                    <td>978-0-538-49790-9</td>
-                    <td>3</td>
-                    <td><span class="badge badge--returned">3</span></td>
-                    <td class="action-col">
-                        <button class="btn-edit" onclick="openModal('edit')">✏️ Edit</button>
-                        <button class="btn-delete" onclick="confirmDelete()">🗑️ Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Philippine History</td>
-                    <td>Teodoro Agoncillo</td>
-                    <td>History</td>
-                    <td>978-971-8845-00-6</td>
-                    <td>4</td>
-                    <td><span class="badge badge--overdue">0</span></td>
-                    <td class="action-col">
-                        <button class="btn-edit" onclick="openModal('edit')">✏️ Edit</button>
-                        <button class="btn-delete" onclick="confirmDelete()">🗑️ Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Data Structures & Algorithms</td>
-                    <td>Robert Lafore</td>
-                    <td>Science & Technology</td>
-                    <td>978-0-672-32453-8</td>
-                    <td>2</td>
-                    <td><span class="badge badge--borrowed">1</span></td>
-                    <td class="action-col">
-                        <button class="btn-edit" onclick="openModal('edit')">✏️ Edit</button>
-                        <button class="btn-delete" onclick="confirmDelete()">🗑️ Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td>Biology Essentials</td>
-                    <td>Neil Campbell</td>
-                    <td>Science & Technology</td>
-                    <td>978-0-321-74983-3</td>
-                    <td>6</td>
-                    <td><span class="badge badge--returned">6</span></td>
-                    <td class="action-col">
-                        <button class="btn-edit" onclick="openModal('edit')">✏️ Edit</button>
-                        <button class="btn-delete" onclick="confirmDelete()">🗑️ Delete</button>
-                    </td>
-                </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
-
-        <!-- Pagination -->
         <div class="pagination">
-            <span class="pagination-info">Showing 1–5 of 1,240 books</span>
-            <div class="pagination-controls">
-                <button class="page-btn" disabled>← Prev</button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">2</button>
-                <button class="page-btn">3</button>
-                <span>...</span>
-                <button class="page-btn">248</button>
-                <button class="page-btn">Next →</button>
-            </div>
+            <span class="pagination-info">
+                Showing <?= count($books) ?> book<?= count($books) !== 1 ? 's' : '' ?>
+                <?= $search || $genre || $status ? 'matching your filters' : 'total' ?>
+            </span>
         </div>
+        <?php endif; ?>
     </div>
 
 </main>
 
-<!-- Add/Edit Modal -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModal()"></div>
-<div class="modal" id="modal">
+<!-- ═══════════════════════════════ ADD MODAL ═══════════════════════════════ -->
+<div class="modal-overlay" id="add-overlay" onclick="closeAddModal()"></div>
+<div class="modal" id="add-modal">
     <div class="modal-header">
-        <h2 id="modal-title">Add New Book</h2>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+        <h2>➕ Add New Book</h2>
+        <button class="modal-close" onclick="closeAddModal()">✕</button>
     </div>
     <div class="modal-body">
-        <form action="#" method="POST">
+        <form action="/LibroTrack/public/index.php?controller=Book&action=store" method="POST">
             <div class="form-row">
                 <div class="form-group">
-                    <label>Book Title</label>
-                    <input type="text" name="title" placeholder="Enter book title">
+                    <label>Book Title *</label>
+                    <input type="text" name="title" placeholder="Enter book title" required>
                 </div>
                 <div class="form-group">
-                    <label>Author</label>
-                    <input type="text" name="author" placeholder="Enter author name">
+                    <label>Author *</label>
+                    <input type="text" name="author" placeholder="Enter author name" required>
                 </div>
             </div>
             <div class="form-row">
@@ -194,22 +203,26 @@
                     <input type="text" name="isbn" placeholder="e.g. 978-0-07-352702-4">
                 </div>
                 <div class="form-group">
-                    <label>Genre</label>
-                    <select name="genre">
+                    <label>Genre *</label>
+                    <select name="genre" required>
                         <option value="">Select genre</option>
-                        <option>Science & Technology</option>
+                        <option>Science &amp; Technology</option>
                         <option>History</option>
                         <option>Literature</option>
                         <option>Mathematics</option>
                         <option>Engineering</option>
                         <option>Social Science</option>
+                        <option>Business</option>
+                        <option>Philosophy</option>
+                        <option>Arts</option>
+                        <option>Other</option>
                     </select>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Number of Copies</label>
-                    <input type="number" name="copies" placeholder="e.g. 3" min="1">
+                    <label>Number of Copies *</label>
+                    <input type="number" name="copies" placeholder="e.g. 3" min="1" value="1" required>
                 </div>
                 <div class="form-group">
                     <label>Shelf Location</label>
@@ -221,51 +234,112 @@
                 <textarea name="description" rows="3" placeholder="Brief description of the book..."></textarea>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-                <button type="submit" class="btn-primary">Save Book</button>
+                <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+                <button type="submit" class="btn-primary">💾 Save Book</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal-overlay" id="delete-overlay" onclick="closeDelete()"></div>
-<div class="modal modal--sm" id="delete-modal">
+<!-- ═══════════════════════════════ VIEW MODAL ══════════════════════════════ -->
+<div class="modal-overlay" id="view-overlay" onclick="closeViewModal()"></div>
+<div class="modal" id="view-modal">
     <div class="modal-header">
-        <h2>Delete Book</h2>
-        <button class="modal-close" onclick="closeDelete()">✕</button>
+        <h2>📖 Book Details</h2>
+        <button class="modal-close" onclick="closeViewModal()">✕</button>
     </div>
-    <div class="modal-body">
-        <p class="delete-msg">Are you sure you want to delete <strong>Introduction to Computing</strong>? This action cannot be undone.</p>
-        <div class="modal-footer">
-            <button class="btn-cancel" onclick="closeDelete()">Cancel</button>
-            <button class="btn-delete-confirm">🗑️ Delete</button>
-        </div>
+    <div class="modal-body" id="view-modal-body">
+        <p>Loading...</p>
     </div>
 </div>
 
-<script>
-    function openModal(mode = 'add') {
-        document.getElementById('modal-title').textContent = mode === 'edit' ? 'Edit Book' : 'Add New Book';
-        document.getElementById('modal-overlay').classList.add('active');
-        document.getElementById('modal').classList.add('active');
-    }
+<!-- ═══════════════════════════════ EDIT MODAL ══════════════════════════════ -->
+<div class="modal-overlay" id="edit-overlay" onclick="closeEditModal()"></div>
+<div class="modal" id="edit-modal">
+    <div class="modal-header">
+        <h2>✏️ Edit Book</h2>
+        <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+        <form action="/LibroTrack/public/index.php?controller=Book&action=update" method="POST">
+            <input type="hidden" name="bookID" id="edit-bookID">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Book Title *</label>
+                    <input type="text" name="title" id="edit-title" placeholder="Enter book title" required>
+                </div>
+                <div class="form-group">
+                    <label>Author *</label>
+                    <input type="text" name="author" id="edit-author" placeholder="Enter author name" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>ISBN</label>
+                    <input type="text" name="isbn" id="edit-isbn" placeholder="e.g. 978-0-07-352702-4">
+                </div>
+                <div class="form-group">
+                    <label>Genre *</label>
+                    <select name="genre" id="edit-genre" required>
+                        <option value="">Select genre</option>
+                        <option>Science &amp; Technology</option>
+                        <option>History</option>
+                        <option>Literature</option>
+                        <option>Mathematics</option>
+                        <option>Engineering</option>
+                        <option>Social Science</option>
+                        <option>Business</option>
+                        <option>Philosophy</option>
+                        <option>Arts</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Number of Copies *</label>
+                    <input type="number" name="copies" id="edit-copies" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Shelf Location</label>
+                    <input type="text" name="location" id="edit-location" placeholder="e.g. Section A, Row 3">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description (optional)</label>
+                <textarea name="description" id="edit-description" rows="3" placeholder="Brief description of the book..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+                <button type="submit" class="btn-primary">💾 Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-    function closeModal() {
-        document.getElementById('modal-overlay').classList.remove('active');
-        document.getElementById('modal').classList.remove('active');
-    }
+<!-- ══════════════════════════════ DELETE MODAL ══════════════════════════════ -->
+<div class="modal-overlay" id="delete-overlay" onclick="closeDeleteModal()"></div>
+<div class="modal modal--sm" id="delete-modal">
+    <div class="modal-header">
+        <h2>🗑️ Delete Book</h2>
+        <button class="modal-close" onclick="closeDeleteModal()">✕</button>
+    </div>
+    <div class="modal-body">
+        <p class="delete-msg">
+            Are you sure you want to delete <strong id="delete-book-title"></strong>?
+            This action cannot be undone.
+        </p>
+        <form action="/LibroTrack/public/index.php?controller=Book&action=destroy" method="POST">
+            <input type="hidden" name="bookID" id="delete-bookID">
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button type="submit" class="btn-delete-confirm">🗑️ Yes, Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-    function confirmDelete() {
-        document.getElementById('delete-overlay').classList.add('active');
-        document.getElementById('delete-modal').classList.add('active');
-    }
-
-    function closeDelete() {
-        document.getElementById('delete-overlay').classList.remove('active');
-        document.getElementById('delete-modal').classList.remove('active');
-    }
-</script>
+<script src="/LibroTrack/public/assets/js/book_management.js"></script>
 
 </body>
 </html>
