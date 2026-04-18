@@ -187,6 +187,61 @@ class Student
         return $stmt->execute() ? true : $this->db->error;
     }
 
+    // ── CREATE: With custom username (used by signup form) ───────────────
+    public function createWithUsername(array $data, string $username, string $password): bool|string
+    {
+        // Check duplicate student number
+        $chk = $this->db->prepare("SELECT studentID FROM tbl_student WHERE studentNumber = ?");
+        $chk->bind_param('s', $data['studentNumber']);
+        $chk->execute();
+        if ($chk->get_result()->num_rows > 0) {
+            return "A student with this student number already exists.";
+        }
+
+        // Check duplicate email
+        $chk2 = $this->db->prepare("SELECT studentID FROM tbl_student WHERE email = ?");
+        $chk2->bind_param('s', $data['email']);
+        $chk2->execute();
+        if ($chk2->get_result()->num_rows > 0) {
+            return "A student with this email already exists.";
+        }
+
+        // Check duplicate username
+        $chk3 = $this->db->prepare("SELECT userID FROM tbl_users WHERE username = ?");
+        $chk3->bind_param('s', $username);
+        $chk3->execute();
+        if ($chk3->get_result()->num_rows > 0) {
+            return "This username is already taken.";
+        }
+
+        $name     = trim($data['fname'] . ' ' . $data['lname']);
+        $hash     = password_hash($password, PASSWORD_BCRYPT);
+
+        $userStmt = $this->db->prepare(
+            "INSERT INTO tbl_users (name, username, password, role) VALUES (?, ?, ?, 'student')"
+        );
+        $userStmt->bind_param('sss', $name, $username, $hash);
+        if (!$userStmt->execute()) {
+            return "Failed to create user account: " . $this->db->error;
+        }
+        $userID = $this->db->insert_id;
+
+        $fname  = trim($data['fname']);
+        $mname  = !empty($data['mname'])   ? trim($data['mname'])   : null;
+        $lname  = trim($data['lname']);
+        $ext    = !empty($data['nameExt']) ? trim($data['nameExt']) : null;
+        $stuNum = trim($data['studentNumber']);
+        $course = trim($data['course']);
+        $email  = trim($data['email']);
+
+        $stmt = $this->db->prepare(
+            "INSERT INTO tbl_student (userID, fname, mname, lname, nameExt, studentNumber, course, email)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        );
+        $stmt->bind_param('isssssss', $userID, $fname, $mname, $lname, $ext, $stuNum, $course, $email);
+        return $stmt->execute() ? true : $this->db->error;
+    }
+
     // ── UPDATE ─────────────────────────────────────────────────────────────
     public function update(int $id, array $data): bool|string
     {
