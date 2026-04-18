@@ -1,61 +1,135 @@
 <?php
 
+require_once __DIR__ . "/../models/User.php";
+
 class AuthController
 {
-    // SHOW LOGIN PAGE
-    public function login()
+    private User $user;
+
+    public function __construct()
     {
-        require "../app/views/login.php";
+        $this->user = new User();
     }
 
-    // HANDLE LOGIN (TEMPORARY - NO DATABASE YET)
-    public function authenticate()
+    // ── SHOW: Login page ──────────────────────────────────────────────────
+    public function login(): void
     {
-        $username = $_POST['username'] ?? '';
+        require __DIR__ . "/../views/login.php";
+    }
+
+    // ── HANDLE: Login form submission ─────────────────────────────────────
+    public function authenticate(): void
+    {
+        $role     = $_POST['role'] ?? 'librarian';
         $password = $_POST['password'] ?? '';
 
-        // TEMPORARY LOGIN (for testing)
-        if ($username === 'admin' && $password === 'admin123') {
-            // redirect to book catalog
-            header("Location: /LibroTrack/public/index.php?controller=Book&action=index");
-            exit;
+        // Student role uses student_id field, librarian uses username field
+        $username = $role === 'student'
+            ? trim($_POST['student_id'] ?? '')
+            : trim($_POST['username']   ?? '');
+
+        if (empty($username) || empty($password)) {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login&error=" .
+                urlencode("Please fill in all fields."));
+        }
+
+        // For students, also allow login by student number
+        if ($role === 'student') {
+            $user = $this->user->authenticateStudent($username, $password);
         } else {
-            echo "Invalid username or password.";
+            $user = $this->user->authenticate($username, $password);
+        }
+
+        if (!$user) {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login&error=" .
+                urlencode("Invalid username or password."));
+        }
+
+        // Role mismatch — student trying librarian tab or vice versa
+        $expectedRole = $role === 'student' ? 'student' : 'admin';
+        if ($user['role'] !== $expectedRole) {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login&error=" .
+                urlencode("Invalid username or password."));
+        }
+
+        session_start();
+        $_SESSION['userID']   = $user['userID'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['role']     = $user['role'];
+        $_SESSION['name']     = $user['name'];
+
+        if ($user['role'] === 'admin') {
+            $this->redirect("/librotrack/public/index.php?controller=Dashboard&action=index");
+        } else {
+            $this->redirect("/librotrack/public/index.php?controller=Student&action=index");
         }
     }
 
-    // SHOW SIGNUP PAGE
-    public function register()
+    // ── SHOW: Register page ───────────────────────────────────────────────
+    public function register(): void
     {
-        require "../app/views/signup.php";
+        require __DIR__ . "/../views/signup.php";
     }
 
-    // HANDLE SIGNUP (TEMPORARY - NO DATABASE YET)
-    public function store()
+    // ── HANDLE: Signup form submission ────────────────────────────────────
+    public function store(): void
     {
-        $fname = $_POST['fname'] ?? '';
-        $lname = $_POST['lname'] ?? '';
-        $username = $_POST['username'] ?? '';
-        $password = $_POST['password'] ?? '';
-
-        // Simple validation
-        if (empty($fname) || empty($lname) || empty($username) || empty($password)) {
-            echo "Please fill in all required fields.";
-            return;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=register");
         }
 
-        // TEMP: just confirm success (no DB yet)
-        echo "Account created successfully! (not yet saved to database)";
+        require_once __DIR__ . "/../models/Student.php";
 
-        // redirect to login after 2 seconds
-        header("refresh:2; url=/LibroTrack/public/index.php?controller=Auth&action=login");
+        // Basic validation
+        $required = ['fname', 'lname', 'studentNumber', 'course', 'email', 'username', 'password', 'confirm_password'];
+        foreach ($required as $field) {
+            if (empty($_POST[$field])) {
+                $this->redirect("/librotrack/public/index.php?controller=Auth&action=register&error=" .
+                    urlencode("Please fill in all required fields."));
+            }
+        }
+
+        if ($_POST['password'] !== $_POST['confirm_password']) {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=register&error=" .
+                urlencode("Passwords do not match."));
+        }
+
+        // Re-use Student model for creation (handles user + student records)
+        $student = new Student();
+        $data    = [
+            'fname'         => $_POST['fname'],
+            'mname'         => $_POST['mname']         ?? '',
+            'lname'         => $_POST['lname'],
+            'nameExt'       => $_POST['nameExt']       ?? '',
+            'studentNumber' => $_POST['studentNumber'],
+            'course'        => $_POST['course'],
+            'email'         => $_POST['email'],
+        ];
+
+        // Override the auto-generated username with the one the student chose
+        $result = $student->createWithUsername($data, $_POST['username'], $_POST['password']);
+
+        if ($result === true) {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login&error=" .
+                urlencode("Account created successfully! You can now sign in."));
+        } else {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=register&error=" .
+                urlencode($result));
+        }
     }
 
-    // LOGOUT
-    public function logout()
+    // ── HANDLE: Logout ────────────────────────────────────────────────────
+    public function logout(): void
     {
-        // later you will destroy session
-        header("Location: /LibroTrack/public/index.php?controller=Auth&action=login");
+        session_start();
+        session_destroy();
+        $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
+    }
+
+    // ── Helper: redirect ──────────────────────────────────────────────────
+    private function redirect(string $url): void
+    {
+        header("Location: {$url}");
         exit;
     }
 }
