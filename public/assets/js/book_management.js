@@ -19,7 +19,7 @@ async function openViewModal(id) {
         '<p style="color:var(--text-muted);text-align:center;padding:1rem;">Loading...</p>';
 
     try {
-        const res  = await fetch(`/LibroTrack/public/index.php?controller=Book&action=get&id=${id}`);
+        const res  = await fetch(`/librotrack/public/index.php?controller=Book&action=get&id=${id}`);
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
 
@@ -33,7 +33,7 @@ async function openViewModal(id) {
         });
 
         const coverHtml = b.cover_image
-            ? `<img src="/LibroTrack/public/assets/img/covers/${b.cover_image}" alt="Cover"
+            ? `<img src="/librotrack/public/assets/img/covers/${b.cover_image}" alt="Cover"
                     style="width:64px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--cream-dark);">`
             : `<span style="font-size:3rem;">📖</span>`;
 
@@ -83,7 +83,7 @@ function closeViewModal() {
 // ── EDIT Modal ────────────────────────────────────────────────────
 async function openEditModal(id) {
     try {
-        const res  = await fetch(`/LibroTrack/public/index.php?controller=Book&action=get&id=${id}`);
+        const res  = await fetch(`/librotrack/public/index.php?controller=Book&action=get&id=${id}`);
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
 
@@ -105,7 +105,7 @@ async function openEditModal(id) {
         removeCheck.checked = false;
         coverInput.value    = '';
         if (b.cover_image) {
-            coverPreview.src        = `/LibroTrack/public/assets/img/covers/${b.cover_image}`;
+            coverPreview.src        = `/librotrack/public/assets/img/covers/${b.cover_image}`;
             coverWrap.style.display = 'block';
         } else {
             coverWrap.style.display = 'none';

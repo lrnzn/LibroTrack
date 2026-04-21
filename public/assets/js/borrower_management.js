@@ -18,7 +18,7 @@ async function openViewModal(id) {
         '<p style="text-align:center;color:var(--text-muted);padding:1rem;">Loading...</p>';
 
     try {
-        const res  = await fetch(`/LibroTrack/public/index.php?controller=Borrower&action=get&id=${id}`);
+        const res  = await fetch(`/librotrack/public/index.php?controller=Borrower&action=get&id=${id}`);
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
 
@@ -78,7 +78,7 @@ function closeViewModal() {
 // ── EDIT Modal ────────────────────────────────────────────────────
 async function openEditModal(id) {
     try {
-        const res  = await fetch(`/LibroTrack/public/index.php?controller=Borrower&action=get&id=${id}`);
+        const res  = await fetch(`/librotrack/public/index.php?controller=Borrower&action=get&id=${id}`);
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
 

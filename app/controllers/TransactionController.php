@@ -29,6 +29,8 @@ class TransactionController
     public function index(): void
     {
         $recentBorrows = $this->transaction->getRecentBorrows();
+        $students      = $this->transaction->getAllStudents();
+        $books         = $this->transaction->getAllAvailableBooks();
         $flash         = $_GET['flash']      ?? '';
         $flash_type    = $_GET['flash_type'] ?? 'success';
         require __DIR__ . "/../views/admin/borrow.php";
@@ -37,9 +39,10 @@ class TransactionController
     // ── READ: Return page ──────────────────────────────────────────────────
     public function returnPage(): void
     {
-        $recentReturns = $this->transaction->getRecentReturns();
-        $flash         = $_GET['flash']      ?? '';
-        $flash_type    = $_GET['flash_type'] ?? 'success';
+        $recentReturns   = $this->transaction->getRecentReturns();
+        $activeStudents  = $this->transaction->getStudentsWithActiveBorrows();
+        $flash           = $_GET['flash']      ?? '';
+        $flash_type      = $_GET['flash_type'] ?? 'success';
         require __DIR__ . "/../views/admin/return.php";
     }
 

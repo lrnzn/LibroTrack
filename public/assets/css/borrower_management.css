@@ -82,3 +82,16 @@
     font-family: 'Playfair Display', serif;
     font-size: 1rem; margin: 1rem 0 0.5rem;
 }
+
+/* ── Default Password Notice ─────────────────────────────────────── */
+.default-password-notice {
+    background: #EAF3FF;
+    color: #1A5FA8;
+    border: 1.5px solid #CCE0FF;
+    border-left: 4px solid #1A5FA8;
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}

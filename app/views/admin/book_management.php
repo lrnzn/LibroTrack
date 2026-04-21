@@ -1,24 +1,12 @@
-<?php
-// Safe defaults — prevents warnings if view is loaded without the controller
-$books        = $books        ?? [];
-$genres       = $genres       ?? [];
-$stats        = $stats        ?? ['total_books' => 0, 'total_copies' => 0, 'available_copies' => 0, 'currently_borrowed' => 0];
-$search       = $search       ?? '';
-$genre        = $genre        ?? '';
-$status       = $status       ?? '';
-$flash        = $flash        ?? '';
-$flash_type   = $flash_type   ?? 'success';
-$flash_action = $flash_action ?? '';
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Book Management</title>
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/books.css">
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/book_management.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/book_management.css">
 </head>
 <body>
 
@@ -33,22 +21,22 @@ $flash_action = $flash_action ?? '';
 <!-- Navbar -->
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/LibroTrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/LibroTrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Book&action=index" class="active">Books</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Transaction&action=index">Transactions</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Report&action=index">Reports</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Book&action=index" class="active">Books</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Transaction&action=index">Transactions</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="/LibroTrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
+        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -60,12 +48,12 @@ $flash_action = $flash_action ?? '';
             <h1>Book Management</h1>
             <p class="page-subtitle">Add, edit, or remove books from the library catalog.</p>
         </div>
-        <div class="header-actions">
+        <div class="header-center">
             <button class="btn-primary" onclick="openAddModal()">➕ Add New Book</button>
-            <div class="view-toggle">
-                <a href="/LibroTrack/public/index.php?controller=Book&action=index" class="view-btn active">📋 Management</a>
-                <a href="/LibroTrack/public/index.php?controller=Book&action=catalog" class="view-btn">📚 Catalog</a>
-            </div>
+        </div>
+        <div class="view-toggle">
+            <a href="/librotrack/public/index.php?controller=Book&action=index" class="view-btn active">📋 Management</a>
+            <a href="/librotrack/public/index.php?controller=Book&action=catalog" class="view-btn">📚 Catalog</a>
         </div>
     </div>
 
@@ -102,7 +90,7 @@ $flash_action = $flash_action ?? '';
     </div>
 
     <!-- Search & Filter -->
-    <form class="toolbar search-form" method="GET" action="/LibroTrack/public/index.php">
+    <form class="toolbar search-form" method="GET" action="/librotrack/public/index.php">
         <input type="hidden" name="controller" value="Book">
         <input type="hidden" name="action"     value="index">
         <input type="text" name="search" class="search-input"
@@ -123,7 +111,7 @@ $flash_action = $flash_action ?? '';
         </select>
         <button type="submit" class="btn-primary">Search</button>
         <?php if ($search || $genre || $status): ?>
-            <a href="/LibroTrack/public/index.php?controller=Book&action=index"
+            <a href="/librotrack/public/index.php?controller=Book&action=index"
                class="btn-cancel" style="text-decoration:none;">✕ Clear</a>
         <?php endif; ?>
     </form>
@@ -165,7 +153,7 @@ $flash_action = $flash_action ?? '';
                     <td><?= $i + 1 ?></td>
                     <td>
                         <?php if (!empty($book['cover_image'])): ?>
-                            <img src="/LibroTrack/public/assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
+                            <img src="/librotrack/public/assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
                                  alt="Cover" style="height:48px;width:36px;object-fit:cover;border-radius:4px;border:1px solid var(--cream-dark);">
                         <?php else: ?>
                             <span style="font-size:1.5rem;">📖</span>
@@ -206,7 +194,7 @@ $flash_action = $flash_action ?? '';
         <button class="modal-close" onclick="closeAddModal()">✕</button>
     </div>
     <div class="modal-body">
-        <form action="/LibroTrack/public/index.php?controller=Book&action=store" method="POST" enctype="multipart/form-data">
+        <form action="/librotrack/public/index.php?controller=Book&action=store" method="POST" enctype="multipart/form-data">
             <div class="form-row">
                 <div class="form-group">
                     <label>Book Title *</label>
@@ -256,7 +244,7 @@ $flash_action = $flash_action ?? '';
             <div class="form-group">
                 <label>Cover Image (optional)</label>
                 <input type="file" name="cover_image" accept="image/jpeg,image/png,image/gif,image/webp">
-                <small style="color:var(--text-muted);font-size:0.78rem;">JPG, PNG, GIF or WEBP — max 5MB</small>
+                <small style="color:var(--text-muted);font-size:0.78rem;">JPG, PNG, GIF or WEBP — max 2MB</small>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
@@ -286,7 +274,7 @@ $flash_action = $flash_action ?? '';
         <button class="modal-close" onclick="closeEditModal()">✕</button>
     </div>
     <div class="modal-body">
-        <form action="/LibroTrack/public/index.php?controller=Book&action=update" method="POST" enctype="multipart/form-data">
+        <form action="/librotrack/public/index.php?controller=Book&action=update" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="bookID" id="edit-bookID">
             <div class="form-row">
                 <div class="form-group">
@@ -345,7 +333,7 @@ $flash_action = $flash_action ?? '';
                     </label>
                 </div>
                 <input type="file" name="cover_image" id="edit-cover-input" accept="image/jpeg,image/png,image/gif,image/webp">
-                <small style="color:var(--text-muted);font-size:0.78rem;">Upload a new image to replace the current one. JPG, PNG, GIF or WEBP — max 5MB</small>
+                <small style="color:var(--text-muted);font-size:0.78rem;">Upload a new image to replace the current one. JPG, PNG, GIF or WEBP — max 2MB</small>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
@@ -367,7 +355,7 @@ $flash_action = $flash_action ?? '';
             Are you sure you want to delete <strong id="delete-book-title"></strong>?
             This action cannot be undone.
         </p>
-        <form action="/LibroTrack/public/index.php?controller=Book&action=destroy" method="POST">
+        <form action="/librotrack/public/index.php?controller=Book&action=destroy" method="POST">
             <input type="hidden" name="bookID" id="delete-bookID">
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
@@ -377,7 +365,7 @@ $flash_action = $flash_action ?? '';
     </div>
 </div>
 
-<script src="/LibroTrack/public/assets/js/book_management.js"></script>
+<script src="/librotrack/public/assets/js/book_management.js"></script>
 
 </body>
 </html>

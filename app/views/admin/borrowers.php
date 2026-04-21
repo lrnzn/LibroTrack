@@ -1,24 +1,12 @@
-<?php
-// Safe defaults
-$borrowers    = $borrowers    ?? [];
-$courses      = $courses      ?? [];
-$stats        = $stats        ?? ['total_borrowers' => 0, 'currently_borrowing' => 0, 'with_overdue' => 0];
-$search       = $search       ?? '';
-$course       = $course       ?? '';
-$status       = $status       ?? '';
-$flash        = $flash        ?? '';
-$flash_type   = $flash_type   ?? 'success';
-$flash_action = $flash_action ?? '';
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Borrower Management</title>
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/books.css">
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/borrower_management.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/borrower_management.css">
 </head>
 <body>
 
@@ -33,22 +21,22 @@ $flash_action = $flash_action ?? '';
 <!-- Navbar -->
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/LibroTrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/LibroTrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Book&action=index">Books</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Borrower&action=index" class="active">Borrowers</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Transaction&action=index">Transactions</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Report&action=index">Reports</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Book&action=index">Books</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Borrower&action=index" class="active">Borrowers</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Transaction&action=index">Transactions</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="/LibroTrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
+        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -91,7 +79,7 @@ $flash_action = $flash_action ?? '';
     </div>
 
     <!-- Search & Filter -->
-    <form class="toolbar search-form" method="GET" action="/LibroTrack/public/index.php">
+    <form class="toolbar search-form" method="GET" action="/librotrack/public/index.php">
         <input type="hidden" name="controller" value="Borrower">
         <input type="hidden" name="action"     value="index">
         <input type="text" name="search" class="search-input"
@@ -113,7 +101,7 @@ $flash_action = $flash_action ?? '';
         </select>
         <button type="submit" class="btn-primary">Search</button>
         <?php if ($search || $course || $status): ?>
-            <a href="/LibroTrack/public/index.php?controller=Borrower&action=index"
+            <a href="/librotrack/public/index.php?controller=Borrower&action=index"
                class="btn-cancel" style="text-decoration:none;">✕ Clear</a>
         <?php endif; ?>
     </form>
@@ -195,7 +183,7 @@ $flash_action = $flash_action ?? '';
         <button class="modal-close" onclick="closeAddModal()">✕</button>
     </div>
     <div class="modal-body">
-        <form action="/LibroTrack/public/index.php?controller=Borrower&action=store" method="POST">
+        <form action="/librotrack/public/index.php?controller=Borrower&action=store" method="POST">
             <div class="form-row">
                 <div class="form-group">
                     <label>First Name *</label>
@@ -242,6 +230,11 @@ $flash_action = $flash_action ?? '';
                 <label>Email Address *</label>
                 <input type="email" name="email" placeholder="Enter email address" required>
             </div>
+            <div class="default-password-notice">
+                🔑 <strong>Default login credentials:</strong><br>
+                The student can log in using their <strong>Student Number</strong> as both their username and password.<br>
+                They can change their password after logging in.
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
                 <button type="submit" class="btn-primary">💾 Save Borrower</button>
@@ -270,7 +263,7 @@ $flash_action = $flash_action ?? '';
         <button class="modal-close" onclick="closeEditModal()">✕</button>
     </div>
     <div class="modal-body">
-        <form action="/LibroTrack/public/index.php?controller=Borrower&action=update" method="POST">
+        <form action="/librotrack/public/index.php?controller=Borrower&action=update" method="POST">
             <input type="hidden" name="studentID" id="edit-studentID">
             <div class="form-row">
                 <div class="form-group">
@@ -337,7 +330,7 @@ $flash_action = $flash_action ?? '';
             Are you sure you want to remove <strong id="delete-borrower-name"></strong> from the system?
             This action cannot be undone.
         </p>
-        <form action="/LibroTrack/public/index.php?controller=Borrower&action=destroy" method="POST">
+        <form action="/librotrack/public/index.php?controller=Borrower&action=destroy" method="POST">
             <input type="hidden" name="studentID" id="delete-studentID">
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
@@ -347,7 +340,7 @@ $flash_action = $flash_action ?? '';
     </div>
 </div>
 
-<script src="/LibroTrack/public/assets/js/borrower_management.js"></script>
+<script src="/librotrack/public/assets/js/borrower_management.js"></script>
 
 </body>
 </html>

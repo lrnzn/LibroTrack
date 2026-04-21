@@ -14,10 +14,10 @@ $flash_type   = $flash_type   ?? 'success';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Transaction History</title>
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/books.css">
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/borrowers.css">
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/book_management.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/borrowers.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/book_management.css">
 </head>
 <body>
 
@@ -30,22 +30,22 @@ $flash_type   = $flash_type   ?? 'success';
 
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/LibroTrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/LibroTrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Book&action=index">Books</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Transaction&action=index" class="active">Transactions</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Report&action=index">Reports</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Book&action=index">Books</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Transaction&action=index" class="active">Transactions</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="/LibroTrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
+        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -57,9 +57,9 @@ $flash_type   = $flash_type   ?? 'success';
             <p class="page-subtitle">Complete log of all borrowing and returning activities.</p>
         </div>
         <div class="view-toggle">
-            <a href="/LibroTrack/public/index.php?controller=Transaction&action=index"      class="view-btn">📤 Borrow</a>
-            <a href="/LibroTrack/public/index.php?controller=Transaction&action=returnPage" class="view-btn">📥 Return</a>
-            <a href="/LibroTrack/public/index.php?controller=Transaction&action=history"    class="view-btn active">🕘 History</a>
+            <a href="/librotrack/public/index.php?controller=Transaction&action=index"      class="view-btn">📤 Borrow</a>
+            <a href="/librotrack/public/index.php?controller=Transaction&action=returnPage" class="view-btn">📥 Return</a>
+            <a href="/librotrack/public/index.php?controller=Transaction&action=history"    class="view-btn active">🕘 History</a>
         </div>
     </div>
 
@@ -84,7 +84,7 @@ $flash_type   = $flash_type   ?? 'success';
     </div>
 
     <!-- Filters -->
-    <form class="toolbar search-form" method="GET" action="/LibroTrack/public/index.php">
+    <form class="toolbar search-form" method="GET" action="/librotrack/public/index.php">
         <input type="hidden" name="controller" value="Transaction">
         <input type="hidden" name="action"     value="history">
         <input type="text" name="search" class="search-input"
@@ -102,7 +102,7 @@ $flash_type   = $flash_type   ?? 'success';
         </select>
         <button type="submit" class="btn-primary">Search</button>
         <?php if ($search || $status || $from || $to): ?>
-            <a href="/LibroTrack/public/index.php?controller=Transaction&action=history"
+            <a href="/librotrack/public/index.php?controller=Transaction&action=history"
                class="btn-cancel" style="text-decoration:none;">✕ Clear</a>
         <?php endif; ?>
     </form>
@@ -198,7 +198,7 @@ $flash_type   = $flash_type   ?? 'success';
     </div>
     <div class="modal-body">
         <p id="edit-info" style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1rem;"></p>
-        <form action="/LibroTrack/public/index.php?controller=Transaction&action=update" method="POST">
+        <form action="/librotrack/public/index.php?controller=Transaction&action=update" method="POST">
             <input type="hidden" name="transactionID" id="edit-transactionID">
             <div class="form-row">
                 <div class="form-group">
@@ -231,7 +231,7 @@ $flash_type   = $flash_type   ?? 'success';
             <strong id="delete-transaction-label"></strong>?
             This action cannot be undone.
         </p>
-        <form action="/LibroTrack/public/index.php?controller=Transaction&action=destroy" method="POST">
+        <form action="/librotrack/public/index.php?controller=Transaction&action=destroy" method="POST">
             <input type="hidden" name="transactionID" id="delete-transactionID">
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
@@ -241,6 +241,6 @@ $flash_type   = $flash_type   ?? 'success';
     </div>
 </div>
 
-<script src="/LibroTrack/public/assets/js/history.js"></script>
+<script src="/librotrack/public/assets/js/history.js"></script>
 </body>
 </html>

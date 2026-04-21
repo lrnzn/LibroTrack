@@ -146,6 +146,51 @@ class Transaction
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    // ── READ: Students who currently have active borrows (for return dropdown) ─
+    public function getStudentsWithActiveBorrows(): array
+    {
+        $result = $this->db->query("
+            SELECT s.studentID, s.fname, s.lname, s.studentNumber, s.course,
+                COUNT(t.transactionID) AS active_borrows
+            FROM tbl_student s
+            JOIN tbl_transaction t ON s.studentID = t.studentID
+            WHERE t.status IN ('borrowed', 'overdue')
+            GROUP BY s.studentID
+            ORDER BY s.lname, s.fname
+        ");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // ── READ: All students for dropdown ───────────────────────────────────
+    public function getAllStudents(): array
+    {
+        $result = $this->db->query("
+            SELECT s.studentID, s.fname, s.lname, s.studentNumber, s.course,
+                COUNT(CASE WHEN t.status IN ('borrowed','overdue') THEN 1 END) AS active_borrows
+            FROM tbl_student s
+            LEFT JOIN tbl_transaction t ON s.studentID = t.studentID
+            GROUP BY s.studentID
+            ORDER BY s.lname, s.fname
+        ");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // ── READ: All available books for dropdown ─────────────────────────────
+    public function getAllAvailableBooks(): array
+    {
+        $result = $this->db->query("
+            SELECT b.bookID, b.title, b.author, b.genre, b.copies,
+                (b.copies - COALESCE(
+                    (SELECT COUNT(*) FROM tbl_transaction t
+                     WHERE t.bookID = b.bookID AND t.status IN ('borrowed','overdue')), 0
+                )) AS available
+            FROM tbl_books b
+            HAVING available > 0
+            ORDER BY b.title
+        ");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     // ── READ: Find student by student number (for AJAX lookup) ────────────
     public function findStudent(string $studentNumber): ?array
     {

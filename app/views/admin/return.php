@@ -1,7 +1,8 @@
 <?php
-$recentReturns = $recentReturns ?? [];
-$flash         = $flash         ?? '';
-$flash_type    = $flash_type    ?? 'success';
+$recentReturns  = $recentReturns  ?? [];
+$activeStudents = $activeStudents ?? [];
+$flash          = $flash          ?? '';
+$flash_type     = $flash_type     ?? 'success';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,9 +10,12 @@ $flash_type    = $flash_type    ?? 'success';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Return Book</title>
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/books.css">
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/borrowers.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/borrowers.css">
 </head>
 <body>
 
@@ -24,22 +28,22 @@ $flash_type    = $flash_type    ?? 'success';
 
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/LibroTrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/LibroTrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Book&action=index">Books</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Transaction&action=index" class="active">Transactions</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Report&action=index">Reports</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Book&action=index">Books</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Transaction&action=index" class="active">Transactions</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="/LibroTrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
+        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -51,9 +55,9 @@ $flash_type    = $flash_type    ?? 'success';
             <p class="page-subtitle">Process a book return transaction.</p>
         </div>
         <div class="view-toggle">
-            <a href="/LibroTrack/public/index.php?controller=Transaction&action=index"      class="view-btn">📤 Borrow</a>
-            <a href="/LibroTrack/public/index.php?controller=Transaction&action=returnPage" class="view-btn active">📥 Return</a>
-            <a href="/LibroTrack/public/index.php?controller=Transaction&action=history"    class="view-btn">🕘 History</a>
+            <a href="/librotrack/public/index.php?controller=Transaction&action=index"      class="view-btn">📤 Borrow</a>
+            <a href="/librotrack/public/index.php?controller=Transaction&action=returnPage" class="view-btn active">📥 Return</a>
+            <a href="/librotrack/public/index.php?controller=Transaction&action=history"    class="view-btn">🕘 History</a>
         </div>
     </div>
 
@@ -62,17 +66,37 @@ $flash_type    = $flash_type    ?? 'success';
         <!-- Return Form -->
         <div class="card transaction-form">
             <div class="card-head"><h2>Process Return</h2></div>
-            <form action="/LibroTrack/public/index.php?controller=Transaction&action=processReturn"
+
+            <?php if (empty($activeStudents)): ?>
+                <div style="text-align:center;padding:2rem;color:var(--text-muted);">
+                    <div style="font-size:2.5rem;margin-bottom:0.75rem;">📭</div>
+                    <p>No students currently have active borrows.</p>
+                </div>
+            <?php else: ?>
+            <form action="/librotrack/public/index.php?controller=Transaction&action=processReturn"
                   method="POST">
                 <input type="hidden" name="transactionID" id="input-transactionID">
                 <input type="hidden" name="daysOverdue"   id="input-daysOverdue" value="0">
 
+                <!-- Student Select -->
                 <div class="form-group">
-                    <label>Student Number</label>
-                    <input type="text" id="student-search"
-                           placeholder="Enter student number (e.g. 2021-00123)" autocomplete="off">
+                    <label>Select Student *</label>
+                    <select id="student-select" onchange="onStudentChange(this)">
+                        <option value="">-- Select a student --</option>
+                        <?php foreach ($activeStudents as $s): ?>
+                            <option value="<?= $s['studentID'] ?>"
+                                data-name="<?= htmlspecialchars($s['fname'] . ' ' . $s['lname']) ?>"
+                                data-number="<?= htmlspecialchars($s['studentNumber']) ?>"
+                                data-course="<?= htmlspecialchars($s['course']) ?>"
+                                data-borrows="<?= $s['active_borrows'] ?>">
+                                <?= htmlspecialchars($s['lname'] . ', ' . $s['fname']) ?>
+                                — <?= htmlspecialchars($s['studentNumber']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
+                <!-- Student Preview -->
                 <div class="info-preview" id="student-preview">
                     <div class="preview-icon">🎓</div>
                     <div class="preview-details">
@@ -83,18 +107,21 @@ $flash_type    = $flash_type    ?? 'success';
                     <span class="badge preview-badge"></span>
                 </div>
 
+                <!-- Book Select (populated via JS after student is chosen) -->
                 <div class="form-group" id="book-select-group">
-                    <label>Select Book to Return</label>
-                    <select id="book-select" onchange="checkOverdue()">
-                        <option value="">-- Select borrowed book --</option>
+                    <label>Select Book to Return *</label>
+                    <select id="book-select" onchange="onBookChange(this)">
+                        <option value="">-- Select student first --</option>
                     </select>
                 </div>
 
+                <!-- Overdue Warning -->
                 <div class="overdue-warning" id="overdue-box">
                     ⚠️ This book is <strong id="overdue-days"></strong> days overdue.
                     Penalty: <strong id="overdue-penalty"></strong> (₱5.00/day)
                 </div>
 
+                <!-- Return Details -->
                 <div class="form-row" id="return-details">
                     <div class="form-group">
                         <label>Return Date *</label>
@@ -120,13 +147,14 @@ $flash_type    = $flash_type    ?? 'success';
                     ✅ Confirm Return
                 </button>
             </form>
+            <?php endif; ?>
         </div>
 
         <!-- Recent Returns -->
         <div class="card">
             <div class="card-head">
                 <h2>Recent Returns</h2>
-                <a href="/LibroTrack/public/index.php?controller=Transaction&action=history" class="card-link">View all →</a>
+                <a href="/librotrack/public/index.php?controller=Transaction&action=history" class="card-link">View all →</a>
             </div>
             <table class="data-table">
                 <thead>
@@ -158,6 +186,6 @@ $flash_type    = $flash_type    ?? 'success';
     </div>
 </main>
 
-<script src="/LibroTrack/public/assets/js/return.js"></script>
+<script src="/librotrack/public/assets/js/return.js"></script>
 </body>
 </html>

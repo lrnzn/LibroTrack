@@ -1,5 +1,7 @@
 <?php
 $recentBorrows = $recentBorrows ?? [];
+$students      = $students      ?? [];
+$books         = $books         ?? [];
 $flash         = $flash         ?? '';
 $flash_type    = $flash_type    ?? 'success';
 ?>
@@ -9,9 +11,9 @@ $flash_type    = $flash_type    ?? 'success';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Borrow Book</title>
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/books.css">
-    <link rel="stylesheet" href="/LibroTrack/public/assets/css/borrowers.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/borrowers.css">
 </head>
 <body>
 
@@ -24,22 +26,22 @@ $flash_type    = $flash_type    ?? 'success';
 
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/LibroTrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/LibroTrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Book&action=index">Books</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Transaction&action=index" class="active">Transactions</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
-        <li><a href="/LibroTrack/public/index.php?controller=Report&action=index">Reports</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Book&action=index">Books</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Transaction&action=index" class="active">Transactions</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="/LibroTrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
+        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -51,9 +53,9 @@ $flash_type    = $flash_type    ?? 'success';
             <p class="page-subtitle">Record a new borrowing transaction.</p>
         </div>
         <div class="view-toggle">
-            <a href="/LibroTrack/public/index.php?controller=Transaction&action=index"      class="view-btn active">📤 Borrow</a>
-            <a href="/LibroTrack/public/index.php?controller=Transaction&action=returnPage" class="view-btn">📥 Return</a>
-            <a href="/LibroTrack/public/index.php?controller=Transaction&action=history"    class="view-btn">🕘 History</a>
+            <a href="/librotrack/public/index.php?controller=Transaction&action=index"      class="view-btn active">📤 Borrow</a>
+            <a href="/librotrack/public/index.php?controller=Transaction&action=returnPage" class="view-btn">📥 Return</a>
+            <a href="/librotrack/public/index.php?controller=Transaction&action=history"    class="view-btn">🕘 History</a>
         </div>
     </div>
 
@@ -62,37 +64,66 @@ $flash_type    = $flash_type    ?? 'success';
         <!-- Borrow Form -->
         <div class="card transaction-form">
             <div class="card-head"><h2>New Borrow Transaction</h2></div>
-            <form action="/LibroTrack/public/index.php?controller=Transaction&action=borrow"
+            <form action="/librotrack/public/index.php?controller=Transaction&action=borrow"
                   method="POST" id="borrow-form">
                 <input type="hidden" name="studentID" id="input-studentID">
                 <input type="hidden" name="bookID"    id="input-bookID">
 
+                <!-- Student Select -->
                 <div class="form-group">
-                    <label>Student Number</label>
-                    <input type="text" id="student-search" placeholder="Enter student number (e.g. 2021-00123)" autocomplete="off">
+                    <label>Select Student *</label>
+                    <select id="student-select" onchange="onStudentChange(this)">
+                        <option value="">-- Select a student --</option>
+                        <?php foreach ($students as $s): ?>
+                            <option value="<?= $s['studentID'] ?>"
+                                data-name="<?= htmlspecialchars($s['fname'] . ' ' . $s['lname']) ?>"
+                                data-number="<?= htmlspecialchars($s['studentNumber']) ?>"
+                                data-course="<?= htmlspecialchars($s['course']) ?>"
+                                data-borrows="<?= $s['active_borrows'] ?>">
+                                <?= htmlspecialchars($s['lname'] . ', ' . $s['fname']) ?>
+                                — <?= htmlspecialchars($s['studentNumber']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
+                <!-- Student Preview -->
                 <div class="info-preview" id="student-preview">
                     <div class="preview-icon">🎓</div>
                     <div class="preview-details">
                         <strong class="preview-name"></strong>
                         <span class="preview-meta"></span>
-                        <span class="preview-status preview-status"></span>
+                        <span class="preview-status"></span>
                     </div>
                     <span class="badge preview-badge"></span>
                 </div>
 
+                <!-- Book Select -->
                 <div class="form-group">
-                    <label>Book ISBN or Title</label>
-                    <input type="text" id="book-search" placeholder="Enter ISBN or search book title" autocomplete="off">
+                    <label>Select Book *</label>
+                    <select id="book-select" onchange="onBookChange(this)">
+                        <option value="">-- Select a book --</option>
+                        <?php foreach ($books as $b): ?>
+                            <option value="<?= $b['bookID'] ?>"
+                                data-title="<?= htmlspecialchars($b['title']) ?>"
+                                data-author="<?= htmlspecialchars($b['author']) ?>"
+                                data-genre="<?= htmlspecialchars($b['genre']) ?>"
+                                data-available="<?= $b['available'] ?>"
+                                data-copies="<?= $b['copies'] ?>">
+                                <?= htmlspecialchars($b['title']) ?>
+                                (<?= $b['available'] ?>/<?= $b['copies'] ?> available)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
+                <!-- Book Preview -->
                 <div class="info-preview" id="book-preview">
                     <div class="preview-icon">📖</div>
                     <div class="preview-details">
                         <strong class="preview-name"></strong>
                         <span class="preview-meta"></span>
-                        <span class="preview-status preview-status"></span>
+                        <span class="preview-status"></span>
                     </div>
                     <span class="badge preview-badge"></span>
                 </div>
@@ -118,7 +149,7 @@ $flash_type    = $flash_type    ?? 'success';
         <div class="card">
             <div class="card-head">
                 <h2>Recent Borrows</h2>
-                <a href="/LibroTrack/public/index.php?controller=Transaction&action=history" class="card-link">View all →</a>
+                <a href="/librotrack/public/index.php?controller=Transaction&action=history" class="card-link">View all →</a>
             </div>
             <table class="data-table">
                 <thead>
@@ -148,6 +179,6 @@ $flash_type    = $flash_type    ?? 'success';
     </div>
 </main>
 
-<script src="/LibroTrack/public/assets/js/borrow.js"></script>
+<script src="/librotrack/public/assets/js/borrow.js"></script>
 </body>
 </html>

@@ -39,17 +39,15 @@
             <h1>Book Catalog</h1>
             <p class="page-subtitle">Browse the complete library collection.</p>
         </div>
-
-        <!-- Grid/List Toggle -->
-        <div class="view-toggle">
-            <button class="view-btn active" id="btn-grid" onclick="switchView('grid')">⊞ Grid</button>
-            <button class="view-btn" id="btn-list" onclick="switchView('list')">☰ List</button>
+        <div class="header-center">
+            <div class="view-toggle">
+                <button class="view-btn active" id="btn-grid" onclick="switchView('grid')">⊞ Grid</button>
+                <button class="view-btn" id="btn-list" onclick="switchView('list')">☰ List</button>
+            </div>
         </div>
-
-        <!-- Page Toggle -->
         <div class="view-toggle">
             <a href="/librotrack/public/index.php?controller=Book&action=index" class="view-btn">📋 Management</a>
-            <a href="/librotrack/public/index.php?controller=Book&action=index" class="view-btn active">📚 Catalog</a>
+            <a href="/librotrack/public/index.php?controller=Book&action=catalog" class="view-btn active">📚 Catalog</a>
         </div>
     </div>
 
@@ -75,7 +73,13 @@
             ?>
             <div class="book-card book-card--<?= $status ?>">
                 <div class="book-cover">
-                    <span class="book-cover-icon">📖</span>
+                    <?php if (!empty($book['cover_image'])): ?>
+                        <img src="/librotrack/public/assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
+                             alt="<?= htmlspecialchars($book['title']) ?>"
+                             style="width:100%;height:100%;object-fit:cover;">
+                    <?php else: ?>
+                        <span class="book-cover-icon">📖</span>
+                    <?php endif; ?>
                 </div>
                 <div class="book-info">
                     <h3 class="book-title"><?= $book['title'] ?></h3>
@@ -96,6 +100,7 @@
             <thead>
                 <tr>
                     <th>#</th>
+                    <th>Cover</th>
                     <th>Title</th>
                     <th>Author</th>
                     <th>Genre</th>
@@ -108,6 +113,14 @@
                     <?php foreach ($books as $i => $book): ?>
                     <tr>
                         <td><?= $i + 1 ?></td>
+                        <td>
+                            <?php if (!empty($book['cover_image'])): ?>
+                                <img src="/librotrack/public/assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
+                                     alt="cover" style="height:48px;width:36px;object-fit:cover;border-radius:4px;border:1px solid var(--cream-dark);">
+                            <?php else: ?>
+                                <span style="font-size:1.5rem;">📖</span>
+                            <?php endif; ?>
+                        </td>
                         <td><?= $book['title'] ?></td>
                         <td><?= $book['author'] ?></td>
                         <td><?= $book['genre'] ?></td>
