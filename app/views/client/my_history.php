@@ -12,7 +12,7 @@
 
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge nav-role-badge--student">Student</span>
     </div>
@@ -21,10 +21,17 @@
         <li><a href="/librotrack/public/index.php?controller=Student&action=catalog">Browse Books</a></li>
         <li><a href="/librotrack/public/index.php?controller=Student&action=borrowed">My Borrowed</a></li>
         <li><a href="/librotrack/public/index.php?controller=Student&action=history" class="active">My History</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Profile&action=index">Profile</a></li>
     </ul>
     <div class="nav-user">
-        <span class="nav-avatar">🎓</span>
-        <span class="nav-username">Juan dela Cruz</span>
+        <span class="nav-avatar">
+            <?php if ($profilePicUrl): ?>
+                <img src="<?= htmlspecialchars($profilePicUrl) ?>" alt="Profile" class="nav-profile-pic">
+            <?php else: ?>
+                🎓
+            <?php endif; ?>
+        </span>
+        <span class="nav-username"><?= htmlspecialchars($student['fname']) ?></span>
         <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
@@ -34,7 +41,7 @@
     <div class="page-header">
         <div>
             <h1>My Borrow History</h1>
-            <p class="page-subtitle">A complete record of all your past borrowing transactions.</p>
+            <p class="page-subtitle">A complete record of all your borrowing transactions.</p>
         </div>
     </div>
 
@@ -42,33 +49,55 @@
     <div class="stats-grid stats-grid--student" style="margin-bottom:1.5rem;">
         <div class="stat-card">
             <div class="stat-icon">📚</div>
-            <div class="stat-info"><span class="stat-value">14</span><span class="stat-label">Total Books Borrowed</span></div>
+            <div class="stat-info">
+                <span class="stat-value"><?= $stats['total_borrowed'] ?></span>
+                <span class="stat-label">Total Books Borrowed</span>
+            </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">✅</div>
-            <div class="stat-info"><span class="stat-value">12</span><span class="stat-label">Returned on Time</span></div>
+            <div class="stat-info">
+                <span class="stat-value"><?= $stats['on_time'] ?></span>
+                <span class="stat-label">Returned on Time</span>
+            </div>
         </div>
-        <div class="stat-card stat-card--warning">
+        <div class="stat-card <?= $stats['returned_late'] > 0 ? 'stat-card--warning' : '' ?>">
             <div class="stat-icon">⚠️</div>
-            <div class="stat-info"><span class="stat-value">2</span><span class="stat-label">Returned Late</span></div>
+            <div class="stat-info">
+                <span class="stat-value"><?= $stats['returned_late'] ?></span>
+                <span class="stat-label">Returned Late</span>
+            </div>
         </div>
     </div>
 
     <!-- Filter -->
-    <div class="toolbar">
-        <input type="text" class="search-input" placeholder="🔍 Search by book title...">
-        <select class="filter-select">
+    <form class="toolbar" method="GET" action="/librotrack/public/index.php">
+        <input type="hidden" name="controller" value="Student">
+        <input type="hidden" name="action"     value="history">
+        <input type="text" name="search" class="search-input"
+               placeholder="🔍 Search by book title..."
+               value="<?= htmlspecialchars($search) ?>">
+        <select name="status" class="filter-select" onchange="this.form.submit()">
             <option value="">All Status</option>
-            <option>Borrowed</option>
-            <option>Returned</option>
-            <option>Overdue</option>
+            <option value="borrowed" <?= $status === 'borrowed' ? 'selected' : '' ?>>Borrowed</option>
+            <option value="returned" <?= $status === 'returned' ? 'selected' : '' ?>>Returned</option>
+            <option value="overdue"  <?= $status === 'overdue'  ? 'selected' : '' ?>>Overdue</option>
         </select>
-        <input type="date" class="filter-select" title="From date">
-        <input type="date" class="filter-select" title="To date">
-    </div>
+        <button type="submit" class="btn-primary">Search</button>
+        <?php if ($search || $status): ?>
+            <a href="/librotrack/public/index.php?controller=Student&action=history"
+               class="btn-cancel" style="text-decoration:none;">✕ Clear</a>
+        <?php endif; ?>
+    </form>
 
     <!-- History Table -->
     <div class="card">
+        <?php if (empty($history)): ?>
+            <div style="text-align:center;padding:2.5rem;color:var(--text-muted);">
+                <p style="font-size:2rem;margin-bottom:0.5rem;">📋</p>
+                <p>No transaction history<?= $search || $status ? ' matching your filters' : ' yet' ?>.</p>
+            </div>
+        <?php else: ?>
         <table class="data-table">
             <thead>
                 <tr>
@@ -83,79 +112,50 @@
                 </tr>
             </thead>
             <tbody>
+                <?php foreach ($history as $i => $t):
+                    $ds = $t['displayStatus'];
+                    $badgeClass = match($ds) {
+                        'returned'      => 'badge--returned',
+                        'returned_late' => 'badge--borrowed',
+                        'overdue'       => 'badge--overdue',
+                        default         => 'badge--borrowed',
+                    };
+                    $badgeLabel = match($ds) {
+                        'returned'      => 'Returned',
+                        'returned_late' => 'Returned Late',
+                        'overdue'       => 'Overdue',
+                        default         => 'Borrowed',
+                    };
+                ?>
                 <tr>
-                    <td>14</td>
-                    <td>Philippine History</td>
-                    <td>Teodoro Agoncillo</td>
-                    <td>Mar 20, 2025</td>
-                    <td>Apr 03, 2025</td>
-                    <td>—</td>
-                    <td>₱25.00</td>
-                    <td><span class="badge badge--overdue">Overdue</span></td>
+                    <td><?= $i + 1 ?></td>
+                    <td><strong><?= htmlspecialchars($t['title']) ?></strong></td>
+                    <td><?= htmlspecialchars($t['author']) ?></td>
+                    <td><?= date('M d, Y', strtotime($t['borrowDate'])) ?></td>
+                    <td><?= date('M d, Y', strtotime($t['dueDate'])) ?></td>
+                    <td><?= $t['returnDate'] ? date('M d, Y', strtotime($t['returnDate'])) : '—' ?></td>
+                    <td>
+                        <?php if ($t['penaltyAmount']): ?>
+                            <span class="badge <?= $t['penaltyPaid'] ? 'badge--returned' : 'badge--overdue' ?>">
+                                ₱<?= number_format($t['penaltyAmount'], 2) ?>
+                                <?= $t['penaltyPaid'] ? ' ✓' : '' ?>
+                            </span>
+                        <?php else: ?>
+                            —
+                        <?php endif; ?>
+                    </td>
+                    <td><span class="badge <?= $badgeClass ?>"><?= $badgeLabel ?></span></td>
                 </tr>
-                <tr>
-                    <td>13</td>
-                    <td>Introduction to Computing</td>
-                    <td>Peter Norton</td>
-                    <td>Mar 25, 2025</td>
-                    <td>Apr 08, 2025</td>
-                    <td>—</td>
-                    <td>—</td>
-                    <td><span class="badge badge--borrowed">Borrowed</span></td>
-                </tr>
-                <tr>
-                    <td>12</td>
-                    <td>Calculus Vol. 2</td>
-                    <td>James Stewart</td>
-                    <td>Feb 10, 2025</td>
-                    <td>Feb 17, 2025</td>
-                    <td>Feb 17, 2025</td>
-                    <td>—</td>
-                    <td><span class="badge badge--returned">Returned</span></td>
-                </tr>
-                <tr>
-                    <td>11</td>
-                    <td>Data Structures & Algorithms</td>
-                    <td>Robert Lafore</td>
-                    <td>Jan 15, 2025</td>
-                    <td>Jan 22, 2025</td>
-                    <td>Jan 25, 2025</td>
-                    <td>₱15.00</td>
-                    <td><span class="badge badge--returned">Returned Late</span></td>
-                </tr>
-                <tr>
-                    <td>10</td>
-                    <td>Biology Essentials</td>
-                    <td>Neil Campbell</td>
-                    <td>Dec 05, 2024</td>
-                    <td>Dec 12, 2024</td>
-                    <td>Dec 12, 2024</td>
-                    <td>—</td>
-                    <td><span class="badge badge--returned">Returned</span></td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td>English for Academic Purposes</td>
-                    <td>Ken Hyland</td>
-                    <td>Nov 20, 2024</td>
-                    <td>Nov 27, 2024</td>
-                    <td>Nov 26, 2024</td>
-                    <td>—</td>
-                    <td><span class="badge badge--returned">Returned</span></td>
-                </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
-
         <div class="pagination">
-            <span class="pagination-info">Showing 1–6 of 14 transactions</span>
-            <div class="pagination-controls">
-                <button class="page-btn" disabled>← Prev</button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">2</button>
-                <button class="page-btn">3</button>
-                <button class="page-btn">Next →</button>
-            </div>
+            <span class="pagination-info">
+                Showing <?= count($history) ?> record<?= count($history) !== 1 ? 's' : '' ?>
+                <?= $search || $status ? 'matching your filters' : 'total' ?>
+            </span>
         </div>
+        <?php endif; ?>
     </div>
 
 </main>

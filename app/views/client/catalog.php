@@ -11,7 +11,7 @@
 
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge nav-role-badge--student">Student</span>
     </div>
@@ -20,10 +20,17 @@
         <li><a href="/librotrack/public/index.php?controller=Student&action=catalog" class="active">Browse Books</a></li>
         <li><a href="/librotrack/public/index.php?controller=Student&action=borrowed">My Borrowed</a></li>
         <li><a href="/librotrack/public/index.php?controller=Student&action=history">My History</a></li>
+        <li><a href="/librotrack/public/index.php?controller=Profile&action=index">Profile</a></li>
     </ul>
     <div class="nav-user">
-        <span class="nav-avatar">🎓</span>
-        <span class="nav-username">Juan dela Cruz</span>
+        <span class="nav-avatar">
+            <?php if ($profilePicUrl): ?>
+                <img src="<?= htmlspecialchars($profilePicUrl) ?>" alt="Profile" class="nav-profile-pic">
+            <?php else: ?>
+                🎓
+            <?php endif; ?>
+        </span>
+        <span class="nav-username"><?= htmlspecialchars($student['fname']) ?></span>
         <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
@@ -41,54 +48,62 @@
         </div>
     </div>
 
-    <!-- Search & Filter -->
-    <div class="toolbar">
-        <input type="text" class="search-input" placeholder="🔍 Search by title, author, or ISBN...">
-        <select class="filter-select">
+    <form class="toolbar" method="GET" action="/librotrack/public/index.php">
+        <input type="hidden" name="controller" value="Student">
+        <input type="hidden" name="action"     value="catalog">
+        <input type="text" name="search" class="search-input"
+               placeholder="🔍 Search by title, author, or ISBN..."
+               value="<?= htmlspecialchars($search) ?>">
+        <select name="genre" class="filter-select" onchange="this.form.submit()">
             <option value="">All Genres</option>
-            <option>Science & Technology</option>
-            <option>History</option>
-            <option>Literature</option>
-            <option>Mathematics</option>
-            <option>Engineering</option>
-            <option>Social Science</option>
+            <?php foreach ($genres as $g): ?>
+                <option value="<?= htmlspecialchars($g) ?>" <?= $genre === $g ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($g) ?>
+                </option>
+            <?php endforeach; ?>
         </select>
-        <select class="filter-select">
+        <select name="status" class="filter-select" onchange="this.form.submit()">
             <option value="">All Status</option>
-            <option>Available</option>
-            <option>Unavailable</option>
+            <option value="available"   <?= $status === 'available'   ? 'selected' : '' ?>>Available</option>
+            <option value="unavailable" <?= $status === 'unavailable' ? 'selected' : '' ?>>Unavailable</option>
         </select>
-    </div>
+        <button type="submit" class="btn-primary">Search</button>
+        <?php if ($search || $genre || $status): ?>
+            <a href="/librotrack/public/index.php?controller=Student&action=catalog"
+               class="btn-cancel" style="text-decoration:none;">✕ Clear</a>
+        <?php endif; ?>
+    </form>
+
+    <?php if (empty($books)): ?>
+        <div style="text-align:center;padding:3rem;color:var(--text-muted);">
+            <div style="font-size:3rem;margin-bottom:0.75rem;">📭</div>
+            <p>No books found<?= $search || $genre || $status ? ' matching your filters' : '' ?>.</p>
+        </div>
+    <?php else: ?>
 
     <!-- Grid View -->
     <div class="books-grid" id="books-grid">
-        <?php
-        $books = [
-            ['title'=>'Introduction to Computing',    'author'=>'Peter Norton',     'genre'=>'Science & Technology','available'=>4,'copies'=>5],
-            ['title'=>'Calculus Vol. 2',              'author'=>'James Stewart',    'genre'=>'Mathematics',         'available'=>3,'copies'=>3],
-            ['title'=>'Philippine History',           'author'=>'Teodoro Agoncillo','genre'=>'History',             'available'=>0,'copies'=>4],
-            ['title'=>'Data Structures & Algorithms', 'author'=>'Robert Lafore',    'genre'=>'Science & Technology','available'=>1,'copies'=>2],
-            ['title'=>'Biology Essentials',           'author'=>'Neil Campbell',    'genre'=>'Science & Technology','available'=>6,'copies'=>6],
-            ['title'=>'Physics for Engineers',        'author'=>'Serway & Jewett',  'genre'=>'Engineering',         'available'=>2,'copies'=>4],
-            ['title'=>'English for Academic Purposes','author'=>'Ken Hyland',       'genre'=>'Literature',          'available'=>5,'copies'=>5],
-            ['title'=>'Sociology: A Brief Intro',     'author'=>'Richard Schaefer', 'genre'=>'Social Science',      'available'=>3,'copies'=>3],
-        ];
-        foreach ($books as $book):
-            $status = $book['available']===0 ? 'unavailable' : ($book['available']<=1 ? 'low' : 'available');
-            $badge  = $book['available']===0 ? 'badge--overdue' : ($book['available']<=1 ? 'badge--borrowed' : 'badge--returned');
-            $label  = $book['available']===0 ? 'Unavailable' : "Available: {$book['available']}/{$book['copies']}";
-            $btnDisabled = $book['available']===0 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : '';
+        <?php foreach ($books as $book):
+            $avail  = (int)$book['available'];
+            $status_cls = $avail === 0 ? 'unavailable' : ($avail <= 1 ? 'low' : 'available');
+            $badge  = $avail === 0 ? 'badge--overdue' : ($avail <= 1 ? 'badge--borrowed' : 'badge--returned');
+            $label  = $avail === 0 ? 'Unavailable' : "Available: {$avail}/{$book['copies']}";
         ?>
-        <div class="book-card book-card--<?= $status ?>">
-            <div class="book-cover"><span class="book-cover-icon">📖</span></div>
+        <div class="book-card book-card--<?= $status_cls ?>">
+            <div class="book-cover">
+                <?php if (!empty($book['cover_image'])): ?>
+                    <img src="/librotrack/public/assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
+                         alt="<?= htmlspecialchars($book['title']) ?>"
+                         style="width:100%;height:100%;object-fit:cover;">
+                <?php else: ?>
+                    <span class="book-cover-icon">📖</span>
+                <?php endif; ?>
+            </div>
             <div class="book-info">
-                <h3 class="book-title"><?= $book['title'] ?></h3>
-                <p class="book-author"><?= $book['author'] ?></p>
-                <span class="book-genre"><?= $book['genre'] ?></span>
+                <h3 class="book-title"><?= htmlspecialchars($book['title']) ?></h3>
+                <p class="book-author"><?= htmlspecialchars($book['author']) ?></p>
+                <span class="book-genre"><?= htmlspecialchars($book['genre']) ?></span>
                 <span class="badge <?= $badge ?>"><?= $label ?></span>
-                <button class="borrow-btn" <?= $btnDisabled ?> onclick="openBorrowModal('<?= addslashes($book['title']) ?>')">
-                    <?= $book['available']===0 ? '❌ Unavailable' : '📤 Request Borrow' ?>
-                </button>
             </div>
         </div>
         <?php endforeach; ?>
@@ -98,24 +113,30 @@
     <div class="card" id="books-list" style="display:none;">
         <table class="data-table">
             <thead>
-                <tr><th>#</th><th>Title</th><th>Author</th><th>Genre</th><th>Availability</th><th>Action</th></tr>
+                <tr><th>#</th><th>Cover</th><th>Title</th><th>Author</th><th>Genre</th><th>Availability</th></tr>
             </thead>
             <tbody>
                 <?php foreach ($books as $i => $book):
-                    $badge = $book['available']===0 ? 'badge--overdue' : ($book['available']<=1 ? 'badge--borrowed' : 'badge--returned');
+                    $avail = (int)$book['available'];
+                    $badge = $avail === 0 ? 'badge--overdue' : ($avail <= 1 ? 'badge--borrowed' : 'badge--returned');
                 ?>
                 <tr>
-                    <td><?= $i+1 ?></td>
-                    <td><?= $book['title'] ?></td>
-                    <td><?= $book['author'] ?></td>
-                    <td><?= $book['genre'] ?></td>
-                    <td><span class="badge <?= $badge ?>"><?= $book['available']===0 ? 'Unavailable' : "{$book['available']}/{$book['copies']}" ?></span></td>
+                    <td><?= $i + 1 ?></td>
                     <td>
-                        <?php if ($book['available'] > 0): ?>
-                        <button class="btn-edit" style="background:#E8F5EE;color:#2E7D52;" onclick="openBorrowModal('<?= addslashes($book['title']) ?>')">📤 Request</button>
+                        <?php if (!empty($book['cover_image'])): ?>
+                            <img src="/librotrack/public/assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
+                                 alt="cover" style="height:48px;width:36px;object-fit:cover;border-radius:4px;">
                         <?php else: ?>
-                        <span style="font-size:0.8rem;color:var(--text-muted);">Unavailable</span>
+                            <span style="font-size:1.5rem;">📖</span>
                         <?php endif; ?>
+                    </td>
+                    <td><strong><?= htmlspecialchars($book['title']) ?></strong></td>
+                    <td><?= htmlspecialchars($book['author']) ?></td>
+                    <td><?= htmlspecialchars($book['genre']) ?></td>
+                    <td>
+                        <span class="badge <?= $badge ?>">
+                            <?= $avail === 0 ? 'Unavailable' : "{$avail}/{$book['copies']}" ?>
+                        </span>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -124,42 +145,16 @@
     </div>
 
     <div class="pagination">
-        <span class="pagination-info">Showing 1–8 of 1,240 books</span>
-        <div class="pagination-controls">
-            <button class="page-btn" disabled>← Prev</button>
-            <button class="page-btn active">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
-            <span>...</span>
-            <button class="page-btn">155</button>
-            <button class="page-btn">Next →</button>
-        </div>
+        <span class="pagination-info">
+            Showing <?= count($books) ?> book<?= count($books) !== 1 ? 's' : '' ?>
+            <?= $search || $genre || $status ? 'matching your filters' : 'total' ?>
+        </span>
     </div>
+
+    <?php endif; ?>
 
 </main>
 
-<!-- Borrow Request Modal -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModal()"></div>
-<div class="modal modal--sm" id="modal">
-    <div class="modal-header">
-        <h2>Request to Borrow</h2>
-        <button class="modal-close" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-body">
-        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">You are requesting to borrow:</p>
-        <p style="font-weight:600; font-size:1rem; color:var(--brown-dark); margin-bottom:1.5rem;" id="modal-book-title"></p>
-        <div class="form-group">
-            <label>Preferred Pickup Date</label>
-            <input type="date" value="2025-04-05">
-        </div>
-        <div class="modal-footer">
-            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-            <button class="btn-primary" onclick="closeModal()">📤 Submit Request</button>
-        </div>
-    </div>
-</div>
-
 <script src="/librotrack/public/assets/js/student_catalog.js"></script>
-
 </body>
 </html>
