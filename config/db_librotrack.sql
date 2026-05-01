@@ -14,12 +14,13 @@ USE db_librotrack;
 --  admin (librarian) and student accounts.
 -- ============================================
 CREATE TABLE tbl_users (
-    userID      INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-    name        VARCHAR(100)    NOT NULL,
-    username    VARCHAR(50)     NOT NULL UNIQUE,
-    password    VARCHAR(255)    NOT NULL,
-    role        ENUM('admin', 'student') NOT NULL,
-    dateAdded   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    userID            INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    name              VARCHAR(100)    NOT NULL,
+    profile_picture   VARCHAR(255)    NULL DEFAULT NULL,
+    username          VARCHAR(50)     NOT NULL UNIQUE,
+    password          VARCHAR(255)    NOT NULL,
+    role              ENUM('admin', 'student') NOT NULL,
+    dateAdded         TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (userID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
