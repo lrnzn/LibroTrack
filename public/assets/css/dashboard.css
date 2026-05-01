@@ -25,8 +25,8 @@ body {
 }
 
 .brand-icon {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     object-fit: contain;
 }
 
@@ -396,4 +396,13 @@ body {
     .nav-links { display: none; }
     .main-content { padding: 1.25rem; }
     .stats-grid, .stats-grid--student { grid-template-columns: repeat(2, 1fr); }
+}
+/* ── Navbar profile picture ──────────────────────────────────────── */
+.nav-profile-pic {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--cream-dark);
+    vertical-align: middle;
 }
