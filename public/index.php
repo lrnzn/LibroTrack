@@ -1,5 +1,11 @@
 <?php
 
+// Mark that this request came through the router
+define('LIBROTRACK', true);
+
+// Suppress notices and warnings — errors still show for fatal issues
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+
 $controller = $_GET['controller'] ?? 'Auth';
 $action = $_GET['action'] ?? 'login';
 
@@ -7,7 +13,8 @@ $controllerName = $controller . "Controller";
 $controllerFile = "../app/controllers/" . $controllerName . ".php";
 
 if (!file_exists($controllerFile)) {
-    die("Controller not found.");
+    header("Location: /librotrack/public/index.php?controller=Auth&action=login");
+    exit;
 }
 
 require_once $controllerFile;
