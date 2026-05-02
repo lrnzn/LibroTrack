@@ -85,9 +85,11 @@ class Student
                 COUNT(CASE WHEN t.status = 'borrowed' THEN 1 END) AS active_borrows,
                 COUNT(CASE WHEN t.status = 'overdue'
                            OR  (t.status = 'borrowed' AND t.dueDate < CURDATE()) THEN 1 END) AS overdue_count,
-                COUNT(t.transactionID) AS total_borrowed
+                COUNT(t.transactionID) AS total_borrowed,
+                u.profile_picture
             FROM tbl_student s
             LEFT JOIN tbl_transaction t ON s.studentID = t.studentID
+            LEFT JOIN tbl_users u ON s.userID = u.userID
             WHERE s.studentID = ?
             GROUP BY s.studentID
         ");

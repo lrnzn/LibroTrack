@@ -67,8 +67,13 @@ class Profile
         $stmt->bind_param('sssssi', $fname, $mname, $lname, $nameExt, $email, $userID);
         if (!$stmt->execute()) return $this->db->error;
 
-        // Update display name in tbl_users
-        $fullName = trim("{$fname} {$lname}");
+        // Update display name in tbl_users (include mname and nameExt if present)
+        $fullName = trim(
+            $fname . ' ' .
+            ($mname ? $mname . ' ' : '') .
+            $lname .
+            ($nameExt ? ', ' . $nameExt : '')
+        );
         $upd = $this->db->prepare("UPDATE tbl_users SET name=? WHERE userID=?");
         $upd->bind_param('si', $fullName, $userID);
         return $upd->execute() ? true : $this->db->error;
