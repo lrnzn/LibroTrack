@@ -1,13 +1,5 @@
-<?php
-$transactions = $transactions ?? [];
-$stats        = $stats        ?? ['total' => 0, 'borrowed' => 0, 'returned' => 0, 'overdue' => 0];
-$search       = $search       ?? '';
-$status       = $status       ?? '';
-$from         = $from         ?? '';
-$to           = $to           ?? '';
-$flash        = $flash        ?? '';
-$flash_type   = $flash_type   ?? 'success';
-?>
+<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

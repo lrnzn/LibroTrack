@@ -1,18 +1,11 @@
-<?php
-$recentReturns  = $recentReturns  ?? [];
-$activeStudents = $activeStudents ?? [];
-$flash          = $flash          ?? '';
-$flash_type     = $flash_type     ?? 'success';
-?>
+<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Return Book</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
     <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
     <link rel="stylesheet" href="/librotrack/public/assets/css/borrowers.css">

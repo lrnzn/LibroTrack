@@ -1,8 +1,5 @@
-<?php
-$stats        = $stats        ?? ['total_books' => 0, 'available_copies' => 0, 'currently_borrowed' => 0, 'overdue' => 0, 'total_borrowers' => 0];
-$transactions = $transactions ?? [];
-$overdueBooks = $overdueBooks ?? [];
-?>
+<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

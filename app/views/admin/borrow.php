@@ -1,10 +1,5 @@
-<?php
-$recentBorrows = $recentBorrows ?? [];
-$students      = $students      ?? [];
-$books         = $books         ?? [];
-$flash         = $flash         ?? '';
-$flash_type    = $flash_type    ?? 'success';
-?>
+<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

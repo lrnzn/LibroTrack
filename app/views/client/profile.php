@@ -1,3 +1,5 @@
+<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,7 +69,14 @@
                     <?php endif; ?>
                 </div>
 
-                <h3 class="profile-name"><?= htmlspecialchars($profile['fname'] . ' ' . $profile['lname']) ?></h3>
+                <h3 class="profile-name"><?= htmlspecialchars(
+                    trim(
+                        $profile['fname'] . ' ' .
+                        ($profile['mname'] ? $profile['mname'] . ' ' : '') .
+                        $profile['lname'] .
+                        ($profile['nameExt'] ? ', ' . $profile['nameExt'] : '')
+                    )
+                ) ?></h3>
                 <p class="profile-meta"><?= htmlspecialchars($profile['studentNumber'] ?? '') ?></p>
                 <p class="profile-meta"><?= htmlspecialchars($profile['course'] ?? '') ?></p>
 
