@@ -52,7 +52,7 @@ class AuthController
                 urlencode("Invalid username or password."));
         }
 
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
         $_SESSION['userID']   = $user['userID'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['role']     = $user['role'];
@@ -121,7 +121,7 @@ class AuthController
     // ── HANDLE: Logout ────────────────────────────────────────────────────
     public function logout(): void
     {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
         session_destroy();
         $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
     }

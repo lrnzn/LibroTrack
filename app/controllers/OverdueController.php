@@ -8,6 +8,13 @@ class OverdueController
 
     public function __construct()
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (!isset($_SESSION['userID']) || $_SESSION['role'] !== 'admin') {
+            header("Location: /librotrack/public/index.php?controller=Auth&action=login&error=" . urlencode("Please log in to access this page."));
+            exit;
+        }
         $this->penalty = new Penalty();
     }
 
