@@ -36,6 +36,26 @@ class User
         return $row ?: null;
     }
 
+    // ── 2FA: Save secret key ──────────────────────────────────────────────
+    public function save2FASecret(int $userID, string $secret): void
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE tbl_users SET two_fa_secret = ? WHERE userID = ?"
+        );
+        $stmt->bind_param('si', $secret, $userID);
+        $stmt->execute();
+    }
+
+    // ── 2FA: Enable 2FA after first successful verify ─────────────────────
+    public function enable2FA(int $userID): void
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE tbl_users SET two_fa_enabled = 1 WHERE userID = ?"
+        );
+        $stmt->bind_param('i', $userID);
+        $stmt->execute();
+    }
+
     // ── AUTH: Verify student by username OR student number ────────────────
     public function authenticateStudent(string $identifier, string $password): ?array
     {
