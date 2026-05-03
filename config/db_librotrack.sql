@@ -17,10 +17,13 @@ CREATE TABLE tbl_users (
     userID            INT UNSIGNED    NOT NULL AUTO_INCREMENT,
     name              VARCHAR(100)    NOT NULL,
     profile_picture   VARCHAR(255)    NULL DEFAULT NULL,
+    two_fa_secret     VARCHAR(255)    NULL DEFAULT NULL,
+    two_fa_enabled    TINYINT(1)      NOT NULL DEFAULT 0,
     username          VARCHAR(50)     NOT NULL UNIQUE,
     password          VARCHAR(255)    NOT NULL,
     role              ENUM('admin', 'student') NOT NULL,
     dateAdded         TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
 
     PRIMARY KEY (userID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
