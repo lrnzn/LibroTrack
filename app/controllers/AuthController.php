@@ -1,14 +1,29 @@
 <?php
 
+require_once __DIR__ . "/../../vendor/autoload.php";
 require_once __DIR__ . "/../models/User.php";
+require_once __DIR__ . "/../models/Student.php";
+
+use PragmaRX\Google2FAQRCode\Google2FA;
 
 class AuthController
 {
     private User $user;
+    private Google2FA $google2fa;
 
     public function __construct()
     {
-        $this->user = new User();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->user     = new User();
+        $this->google2fa = new Google2FA();
+    }
+
+    private function redirect(string $url): void
+    {
+        header("Location: {$url}");
+        exit;
     }
 
     // ── SHOW: Login page ──────────────────────────────────────────────────
@@ -23,7 +38,6 @@ class AuthController
         $role     = $_POST['role'] ?? 'librarian';
         $password = $_POST['password'] ?? '';
 
-        // Student role uses student_id field, librarian uses username field
         $username = $role === 'student'
             ? trim($_POST['student_id'] ?? '')
             : trim($_POST['username']   ?? '');
@@ -33,7 +47,6 @@ class AuthController
                 urlencode("Please fill in all fields."));
         }
 
-        // For students, also allow login by student number
         if ($role === 'student') {
             $user = $this->user->authenticateStudent($username, $password);
         } else {
@@ -45,24 +58,143 @@ class AuthController
                 urlencode("Invalid username or password."));
         }
 
-        // Role mismatch — student trying librarian tab or vice versa
+        // Role mismatch check
         $expectedRole = $role === 'student' ? 'student' : 'admin';
         if ($user['role'] !== $expectedRole) {
             $this->redirect("/librotrack/public/index.php?controller=Auth&action=login&error=" .
                 urlencode("Invalid username or password."));
         }
 
-        if (session_status() === PHP_SESSION_NONE) { session_start(); }
-        $_SESSION['userID']   = $user['userID'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['role']     = $user['role'];
-        $_SESSION['name']     = $user['name'];
-
-        if ($user['role'] === 'admin') {
-            $this->redirect("/librotrack/public/index.php?controller=Dashboard&action=index");
-        } else {
+        // Students skip 2FA — log in directly
+        if ($user['role'] === 'student') {
+            session_start();
+            $_SESSION['userID']   = $user['userID'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['role']     = $user['role'];
+            $_SESSION['name']     = $user['name'];
             $this->redirect("/librotrack/public/index.php?controller=Student&action=index");
         }
+
+        // Admin — store as pending until 2FA is verified
+        $_SESSION['pending_userID']   = $user['userID'];
+        $_SESSION['pending_username'] = $user['username'];
+        $_SESSION['pending_name']     = $user['name'];
+        $_SESSION['pending_role']     = $user['role'];
+
+        // Has 2FA already been set up?
+        if (!empty($user['two_fa_enabled']) && $user['two_fa_enabled'] == 1) {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=verify2fa");
+        } else {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=setup2fa");
+        }
+    }
+
+    // ── SHOW: Setup 2FA (first time) ──────────────────────────────────────
+    public function setup2fa(): void
+    {
+        if (!isset($_SESSION['pending_userID'])) {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
+        }
+
+        $userID = (int)$_SESSION['pending_userID'];
+        $user   = $this->user->findById($userID);
+
+        if (!$user) {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
+        }
+
+        // Generate and save secret if not yet set
+        if (!empty($user['two_fa_secret'])) {
+            $secret = $user['two_fa_secret'];
+        } else {
+            $secret = $this->google2fa->generateSecretKey();
+            $this->user->save2FASecret($userID, $secret);
+        }
+
+        // Build QR code URL using free external API (no local library needed)
+        $qrUrl  = $this->google2fa->getQRCodeUrl(
+            "LibroTrack",
+            $user['username'],
+            $secret
+        );
+        $qrCode = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" . urlencode($qrUrl);
+
+        require __DIR__ . "/../views/setup_2fa.php";
+    }
+
+    // ── HANDLE: Confirm 2FA setup (verify first code) ─────────────────────
+    public function confirm2fa(): void
+    {
+        if (!isset($_SESSION['pending_userID'])) {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
+        }
+
+        $userID = (int)$_SESSION['pending_userID'];
+        $code   = trim($_POST['otp_code'] ?? '');
+        $user   = $this->user->findById($userID);
+
+        $valid = $this->google2fa->verifyKey($user['two_fa_secret'], $code);
+
+        if ($valid) {
+            // Mark 2FA as enabled
+            $this->user->enable2FA($userID);
+
+            // Complete login
+            $_SESSION['userID']   = $userID;
+            $_SESSION['username'] = $_SESSION['pending_username'];
+            $_SESSION['role']     = $_SESSION['pending_role'];
+            $_SESSION['name']     = $_SESSION['pending_name'];
+            unset($_SESSION['pending_userID'], $_SESSION['pending_username'],
+                  $_SESSION['pending_role'],  $_SESSION['pending_name']);
+
+            $this->redirect("/librotrack/public/index.php?controller=Dashboard&action=index");
+        }
+
+        $error = "Invalid code. Please try again.";
+        // Regenerate QR for display
+        $qrUrl  = $this->google2fa->getQRCodeUrl("LibroTrack", $user['username'], $user['two_fa_secret']);
+        $qrCode = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" . urlencode($qrUrl);
+        $secret = $user['two_fa_secret'];
+        require __DIR__ . "/../views/setup_2fa.php";
+    }
+
+    // ── SHOW: Verify 2FA (every login after setup) ────────────────────────
+    public function verify2fa(): void
+    {
+        if (!isset($_SESSION['pending_userID'])) {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
+        }
+
+        $error = $_GET['error'] ?? '';
+        require __DIR__ . "/../views/verify_2fa.php";
+    }
+
+    // ── HANDLE: Verify 2FA code ────────────────────────────────────────────
+    public function processVerify(): void
+    {
+        if (!isset($_SESSION['pending_userID'])) {
+            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
+        }
+
+        $userID = (int)$_SESSION['pending_userID'];
+        $code   = trim($_POST['otp_code'] ?? '');
+        $user   = $this->user->findById($userID);
+
+        $valid = $this->google2fa->verifyKey($user['two_fa_secret'], $code);
+
+        if ($valid) {
+            $_SESSION['userID']   = $userID;
+            $_SESSION['username'] = $_SESSION['pending_username'];
+            $_SESSION['role']     = $_SESSION['pending_role'];
+            $_SESSION['name']     = $_SESSION['pending_name'];
+            unset($_SESSION['pending_userID'], $_SESSION['pending_username'],
+                  $_SESSION['pending_role'],  $_SESSION['pending_name']);
+
+            $this->redirect("/librotrack/public/index.php?controller=Dashboard&action=index");
+        }
+
+        $this->redirect("/librotrack/public/index.php?controller=Auth&action=verify2fa&error=" .
+            urlencode("Invalid code. Please try again."));
     }
 
     // ── SHOW: Register page ───────────────────────────────────────────────
@@ -80,7 +212,6 @@ class AuthController
 
         require_once __DIR__ . "/../models/Student.php";
 
-        // Basic validation
         $required = ['fname', 'lname', 'studentNumber', 'course', 'email', 'username', 'password', 'confirm_password'];
         foreach ($required as $field) {
             if (empty($_POST[$field])) {
@@ -94,7 +225,6 @@ class AuthController
                 urlencode("Passwords do not match."));
         }
 
-        // Re-use Student model for creation (handles user + student records)
         $student = new Student();
         $data    = [
             'fname'         => $_POST['fname'],
@@ -106,7 +236,6 @@ class AuthController
             'email'         => $_POST['email'],
         ];
 
-        // Override the auto-generated username with the one the student chose
         $result = $student->createWithUsername($data, $_POST['username'], $_POST['password']);
 
         if ($result === true) {
@@ -121,15 +250,10 @@ class AuthController
     // ── HANDLE: Logout ────────────────────────────────────────────────────
     public function logout(): void
     {
-        if (session_status() === PHP_SESSION_NONE) { session_start(); }
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         session_destroy();
         $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
-    }
-
-    // ── Helper: redirect ──────────────────────────────────────────────────
-    private function redirect(string $url): void
-    {
-        header("Location: {$url}");
-        exit;
     }
 }
