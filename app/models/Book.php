@@ -153,7 +153,7 @@ class Book
         $row = $this->db->query("
             SELECT
                 COUNT(*) AS total_books,
-                SUM(copies) AS total_copies,
+                COALESCE(SUM(copies), 0) AS total_copies,
                 (SELECT COUNT(*) FROM tbl_transaction WHERE status = 'borrowed') AS currently_borrowed
             FROM tbl_books
         ")->fetch_assoc();

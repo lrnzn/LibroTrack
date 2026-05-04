@@ -56,28 +56,28 @@
         <div class="stat-card stat-card--warning">
             <div class="stat-icon">⚠️</div>
             <div>
-                <div class="stat-value"><?= number_format($stats['overdue_count']) ?></div>
+                <div class="stat-value"><?= number_format((int)($stats['overdue_count'] ?? 0)) ?></div>
                 <div class="stat-label">Overdue Books</div>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">💰</div>
             <div>
-                <div class="stat-value">₱<?= number_format($stats['total_penalties'], 2) ?></div>
+                <div class="stat-value">₱<?= number_format((float)($stats['total_penalties'] ?? 0), 2) ?></div>
                 <div class="stat-label">Total Penalties</div>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">✅</div>
             <div>
-                <div class="stat-value">₱<?= number_format($stats['paid_amount'], 2) ?></div>
+                <div class="stat-value">₱<?= number_format((float)($stats['paid_amount'] ?? 0), 2) ?></div>
                 <div class="stat-label">Penalties Paid</div>
             </div>
         </div>
         <div class="stat-card stat-card--warning">
             <div class="stat-icon">❌</div>
             <div>
-                <div class="stat-value">₱<?= number_format($stats['unpaid_amount'], 2) ?></div>
+                <div class="stat-value">₱<?= number_format((float)($stats['unpaid_amount'] ?? 0), 2) ?></div>
                 <div class="stat-label">Unpaid Penalties</div>
             </div>
         </div>
@@ -138,7 +138,7 @@
                     <td>
                         <span class="badge badge--overdue"><?= $r['daysOverdue'] ?> day<?= $r['daysOverdue'] != 1 ? 's' : '' ?></span>
                     </td>
-                    <td><strong>₱<?= number_format($r['penaltyAmount'], 2) ?></strong></td>
+                    <td><strong>₱<?= number_format((float)($r['penaltyAmount'] ?? 0), 2) ?></strong></td>
                     <td>
                         <?php if ($isPaid): ?>
                             <span class="badge badge--returned">Paid</span>

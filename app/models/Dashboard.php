@@ -18,12 +18,12 @@ class Dashboard
         $row = $this->db->query("
             SELECT
                 (SELECT COUNT(*) FROM tbl_books) AS total_books,
-                (SELECT SUM(
+                COALESCE((SELECT SUM(
                     b.copies - COALESCE(
                         (SELECT COUNT(*) FROM tbl_transaction t
                          WHERE t.bookID = b.bookID AND t.status = 'borrowed'), 0
                     )
-                ) FROM tbl_books b) AS available_copies,
+                ) FROM tbl_books b), 0) AS available_copies,
                 (SELECT COUNT(*) FROM tbl_transaction
                  WHERE status = 'borrowed') AS currently_borrowed,
                 (SELECT COUNT(*) FROM tbl_transaction
