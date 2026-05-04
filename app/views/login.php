@@ -42,8 +42,8 @@ $error = $_GET['error'] ?? '';
                 </div>
 
                 <div id="student-fields" class="form-group" style="display:none;">
-                    <label for="student-id">USERNAME OR STUDENT ID</label>
-                    <input type="text" id="student-id" name="student_id" placeholder="Enter username or e.g. ABC01234567" autocomplete="off">
+                    <label for="student-id">STUDENT ID</label>
+                    <input type="text" id="student-id" name="student_id" placeholder="Enter student ID e.g. ABC01234567" autocomplete="off">
                 </div>
 
                 <div class="form-group">
