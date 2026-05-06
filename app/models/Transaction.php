@@ -192,17 +192,22 @@ class Transaction
     }
 
     // ── READ: Find student by student number (for AJAX lookup) ────────────
-    public function findStudent(string $studentNumber): ?array
+    public function findStudent(string $query): ?array
     {
+        $like = "%{$query}%";
         $stmt = $this->db->prepare("
             SELECT s.studentID, s.fname, s.lname, s.studentNumber, s.course,
                 COUNT(CASE WHEN t.status IN ('borrowed','overdue') THEN 1 END) AS active_borrows
             FROM tbl_student s
             LEFT JOIN tbl_transaction t ON s.studentID = t.studentID
-            WHERE s.studentNumber = ?
+            WHERE s.studentNumber LIKE ?
+               OR s.fname LIKE ?
+               OR s.lname LIKE ?
+               OR CONCAT(s.fname,' ',s.lname) LIKE ?
             GROUP BY s.studentID
+            LIMIT 1
         ");
-        $stmt->bind_param('s', $studentNumber);
+        $stmt->bind_param('ssss', $like, $like, $like, $like);
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc();
         return $row ?: null;
