@@ -1,0 +1,113 @@
+/* LibroTrack — Live Search | public/assets/css/livesearch.css */
+
+.livesearch-wrap {
+    position: relative;
+}
+
+.livesearch-wrap input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--cream-dark);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+
+.livesearch-wrap input:focus {
+    border-color: var(--brown-warm);
+    box-shadow: 0 0 0 3px rgba(139, 94, 60, 0.12);
+    background: var(--white);
+}
+
+.livesearch-results {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border: 1.5px solid var(--cream-dark);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    list-style: none;
+    z-index: 100;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.livesearch-results.active {
+    display: block;
+}
+
+.livesearch-results li {
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--brown-dark);
+    border-bottom: 1px solid var(--cream);
+    transition: background 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.livesearch-results li:last-child {
+    border-bottom: none;
+}
+
+.livesearch-results li:hover,
+.livesearch-results li.highlighted {
+    background: var(--cream);
+}
+
+.livesearch-results li .ls-main {
+    font-weight: 500;
+}
+
+.livesearch-results li .ls-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.livesearch-results li .ls-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.ls-badge--ok       { background: #E8F5EE; color: #2E7D52; }
+.ls-badge--warn     { background: #FFF3E0; color: #E65100; }
+.ls-badge--unavail  { background: #FDECEA; color: #C0392B; }
+
+.livesearch-results li.ls-empty {
+    color: var(--text-muted);
+    cursor: default;
+    font-style: italic;
+}
+.livesearch-results li.ls-empty:hover {
+    background: none;
+}
+
+/* ── Clear button on preview card ────────────────────────────────── */
+.preview-clear {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    margin-left: auto;
+    transition: color 0.2s, background 0.2s;
+}
+.preview-clear:hover {
+    color: #C0392B;
+    background: #FDECEA;
+}
