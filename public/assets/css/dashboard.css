@@ -385,6 +385,28 @@ body {
     to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Staggered fade-in for all main content sections */
+.card                { animation: fadeIn 0.4s ease both; }
+.toolbar             { animation: fadeIn 0.45s ease both; }
+.stats-row           { animation: fadeIn 0.4s ease both; }
+.transaction-layout  { animation: fadeIn 0.4s ease both; }
+.profile-layout      { animation: fadeIn 0.4s ease both; }
+.books-grid          { animation: fadeIn 0.45s ease both; }
+.borrowed-cards      { animation: fadeIn 0.45s ease both; }
+.genre-bars          { animation: fadeIn 0.45s ease both; }
+
+/* Stagger cards inside grids */
+.stats-grid .stat-card:nth-child(1),
+.stats-row  .stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stats-grid .stat-card:nth-child(2),
+.stats-row  .stat-card:nth-child(2) { animation-delay: 0.1s; }
+.stats-grid .stat-card:nth-child(3),
+.stats-row  .stat-card:nth-child(3) { animation-delay: 0.15s; }
+.stats-grid .stat-card:nth-child(4),
+.stats-row  .stat-card:nth-child(4) { animation-delay: 0.2s; }
+.stats-grid .stat-card:nth-child(5),
+.stats-row  .stat-card:nth-child(5) { animation-delay: 0.25s; }
+
 /* ---- Responsive ---- */
 @media (max-width: 1024px) {
     .stats-grid { grid-template-columns: repeat(3, 1fr); }
