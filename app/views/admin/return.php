@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
     <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
     <link rel="stylesheet" href="/librotrack/public/assets/css/borrowers.css">
+    <link rel="stylesheet" href="/librotrack/public/assets/css/livesearch.css">
 </head>
 <body>
 
@@ -59,34 +60,20 @@
         <!-- Return Form -->
         <div class="card transaction-form">
             <div class="card-head"><h2>Process Return</h2></div>
-
-            <?php if (empty($activeStudents)): ?>
-                <div style="text-align:center;padding:2rem;color:var(--text-muted);">
-                    <div style="font-size:2.5rem;margin-bottom:0.75rem;">📭</div>
-                    <p>No students currently have active borrows.</p>
-                </div>
-            <?php else: ?>
             <form action="/librotrack/public/index.php?controller=Transaction&action=processReturn"
                   method="POST">
                 <input type="hidden" name="transactionID" id="input-transactionID">
                 <input type="hidden" name="daysOverdue"   id="input-daysOverdue" value="0">
 
-                <!-- Student Select -->
+                <!-- Student Live Search -->
                 <div class="form-group">
-                    <label>Select Student *</label>
-                    <select id="student-select" onchange="onStudentChange(this)">
-                        <option value="">-- Select a student --</option>
-                        <?php foreach ($activeStudents as $s): ?>
-                            <option value="<?= $s['studentID'] ?>"
-                                data-name="<?= htmlspecialchars($s['fname'] . ' ' . $s['lname']) ?>"
-                                data-number="<?= htmlspecialchars($s['studentNumber']) ?>"
-                                data-course="<?= htmlspecialchars($s['course']) ?>"
-                                data-borrows="<?= $s['active_borrows'] ?>">
-                                <?= htmlspecialchars($s['lname'] . ', ' . $s['fname']) ?>
-                                — <?= htmlspecialchars($s['studentNumber']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                    <label>Search Student *</label>
+                    <div class="livesearch-wrap">
+                        <input type="text" id="student-search"
+                               placeholder="Type name or student number..."
+                               autocomplete="off">
+                        <ul class="livesearch-results" id="student-results"></ul>
+                    </div>
                 </div>
 
                 <!-- Student Preview -->
@@ -98,9 +85,10 @@
                         <span class="preview-status"></span>
                     </div>
                     <span class="badge preview-badge"></span>
+                    <button type="button" class="preview-clear" onclick="clearStudent()">✕</button>
                 </div>
 
-                <!-- Book Select (populated via JS after student is chosen) -->
+                <!-- Book Select (loaded after student is picked) -->
                 <div class="form-group" id="book-select-group">
                     <label>Select Book to Return *</label>
                     <select id="book-select" onchange="onBookChange(this)">
@@ -140,7 +128,6 @@
                     ✅ Confirm Return
                 </button>
             </form>
-            <?php endif; ?>
         </div>
 
         <!-- Recent Returns -->
