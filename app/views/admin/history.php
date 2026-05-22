@@ -82,10 +82,16 @@
         <input type="text" name="search" class="search-input"
                placeholder="🔍 Search by borrower or book title..."
                value="<?= htmlspecialchars($search) ?>">
-        <input type="date" name="from" class="filter-select"
-               title="From date" value="<?= htmlspecialchars($from) ?>">
-        <input type="date" name="to" class="filter-select"
-               title="To date" value="<?= htmlspecialchars($to) ?>">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+            <label style="font-size:0.78rem;color:var(--text-muted);white-space:nowrap;">From</label>
+            <input type="date" name="from" class="filter-select"
+                   value="<?= htmlspecialchars($from) ?>">
+        </div>
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+            <label style="font-size:0.78rem;color:var(--text-muted);white-space:nowrap;">To</label>
+            <input type="date" name="to" class="filter-select"
+                   value="<?= htmlspecialchars($to) ?>">
+        </div>
         <select name="status" class="filter-select" onchange="this.form.submit()">
             <option value="">All Status</option>
             <option value="borrowed" <?= $status === 'borrowed' ? 'selected' : '' ?>>Borrowed</option>

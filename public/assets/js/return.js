@@ -87,7 +87,7 @@ async function loadActiveBorrows(studentID) {
         const data = await res.json();
         const select = document.getElementById('book-select');
 
-        select.innerHTML = '<option value="">-- Select book to return --</option>';
+        select.innerHTML = '<option value="" disabled selected hidden>-- Select book to return --</option>';
 
         data.borrows.forEach(b => {
             const overdueTxt = b.daysOverdue > 0 ? ` — ⚠️ ${b.daysOverdue}d overdue` : '';
@@ -170,7 +170,7 @@ function recalculatePenalty(returnDateStr) {
 // ── Reset helpers ─────────────────────────────────────────────────
 function resetBookSection() {
     const select = document.getElementById('book-select');
-    if (select) select.innerHTML = '<option value="">-- Select student first --</option>';
+    if (select) select.innerHTML = '<option value="" disabled selected hidden>-- Select student first --</option>';
     document.getElementById('book-select-group').style.display = 'none';
     resetReturnDetails();
 }

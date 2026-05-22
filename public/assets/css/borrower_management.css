@@ -32,7 +32,7 @@
 .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
 
 /* ── Search Form ─────────────────────────────────────────────────── */
-.search-form { display: contents; }
+.search-form { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; animation: fadeIn 0.45s ease both; }
 .header-actions { display: flex; gap: 0.75rem; align-items: center; }
 
 /* ── Table Extras ────────────────────────────────────────────────── */

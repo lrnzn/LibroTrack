@@ -97,7 +97,7 @@
 .btn-view:hover { background: #E1BEE7; }
 
 /* ── Search Form ─────────────────────────────────────────────────── */
-.search-form { display: contents; }
+.search-form { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; animation: fadeIn 0.45s ease both; }
 
 /* ── Page Header Actions ─────────────────────────────────────────── */
 .header-actions {

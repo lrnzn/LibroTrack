@@ -145,7 +145,7 @@ CREATE TABLE `tbl_users` (
 --
 
 INSERT INTO `tbl_users` (`userID`, `name`, `profile_picture`, `two_fa_secret`, `two_fa_enabled`, `username`, `password`, `role`, `dateAdded`) VALUES
-(1, 'Administrator', NULL, 'KT5BM63JXQDHPU3O', 1, 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', '2026-04-17 12:21:01'),
+(1, 'Administrator', NULL, NULL, 0, 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', '2026-04-17 12:21:01'),
 (2, 'Lorenzen Selendron Ilon', 'profile_2_69f54dfcde2e0.jpg', NULL, 0, 'lrnzn', '$2y$10$TUfq6Y.y0xVLVSrerHbC5ultE8qDmlqHn0I3SzJ7nF8rfFiqL9Mq.', 'student', '2026-04-18 11:33:22'),
 (4, 'Joeric Israel Gonzales', NULL, NULL, 0, 'joeric.gonzales', '$2y$10$hYwKoXYpSKkQ7XBbKDohH.Y4BkuGA.gnE7f6Is1wrEs9ycvHg0nUW', 'student', '2026-04-18 23:43:54');
 

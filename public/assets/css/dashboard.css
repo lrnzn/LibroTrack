@@ -392,6 +392,8 @@ body {
 .transaction-layout  { animation: fadeIn 0.4s ease both; }
 .profile-layout      { animation: fadeIn 0.4s ease both; }
 .books-grid          { animation: fadeIn 0.45s ease both; }
+.overdue-warning     { animation: fadeIn 0.45s ease both; }
+.borrowed-card       { animation: fadeIn 0.45s ease both; }
 .borrowed-cards      { animation: fadeIn 0.45s ease both; }
 .genre-bars          { animation: fadeIn 0.45s ease both; }
 
