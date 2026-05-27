@@ -68,7 +68,13 @@ class Transaction
                     THEN DATEDIFF(t.returnDate, t.dueDate)
                     ELSE 0
                 END AS daysOverdue,
-                p.amount AS penaltyAmount,
+                CASE
+                    WHEN t.status IN ('borrowed','overdue') AND t.dueDate < CURDATE()
+                    THEN DATEDIFF(CURDATE(), t.dueDate) * 5.00
+                    WHEN t.status = 'returned' AND t.returnDate > t.dueDate
+                    THEN DATEDIFF(t.returnDate, t.dueDate) * 5.00
+                    ELSE 0
+                END AS penaltyAmount,
                 p.paid   AS penaltyPaid,
                 p.penaltyID
             FROM tbl_transaction t

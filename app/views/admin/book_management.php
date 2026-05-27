@@ -1,6 +1,4 @@
-<?php if (!defined("LIBROTRACK")) 
-    { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } 
-?>
+<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -217,16 +215,18 @@
                 <div class="form-group">
                     <label>Genre *</label>
                     <select name="genre" required>
-                        <option value="">Select genre</option>
+                        <option value="" disabled selected hidden>Select genre</option>
                         <option>Science &amp; Technology</option>
                         <option>History</option>
                         <option>Literature</option>
+                        <option>Novel</option>
                         <option>Mathematics</option>
                         <option>Engineering</option>
                         <option>Social Science</option>
                         <option>Business</option>
                         <option>Philosophy</option>
                         <option>Arts</option>
+                        <option>Fantasy</option>
                         <option>Other</option>
                     </select>
                 </div>
@@ -248,7 +248,7 @@
             <div class="form-group">
                 <label>Cover Image (optional)</label>
                 <input type="file" name="cover_image" accept="image/jpeg,image/png,image/gif,image/webp">
-                <small style="color:var(--text-muted);font-size:0.78rem;">JPG, PNG, GIF or WEBP — max 2MB</small>
+                <small style="color:var(--text-muted);font-size:0.78rem;">JPG, PNG, GIF or WEBP — max 5MB</small>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
@@ -298,10 +298,11 @@
                 <div class="form-group">
                     <label>Genre *</label>
                     <select name="genre" id="edit-genre" required>
-                        <option value="">Select genre</option>
+                        <option value="" disabled selected hidden>Select genre</option>
                         <option>Science &amp; Technology</option>
                         <option>History</option>
                         <option>Literature</option>
+                        <option>Non-Fiction</option>
                         <option>Mathematics</option>
                         <option>Engineering</option>
                         <option>Social Science</option>
@@ -337,7 +338,7 @@
                     </label>
                 </div>
                 <input type="file" name="cover_image" id="edit-cover-input" accept="image/jpeg,image/png,image/gif,image/webp">
-                <small style="color:var(--text-muted);font-size:0.78rem;">Upload a new image to replace the current one. JPG, PNG, GIF or WEBP — max 2MB</small>
+                <small style="color:var(--text-muted);font-size:0.78rem;">Upload a new image to replace the current one. JPG, PNG, GIF or WEBP — max 5MB</small>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>

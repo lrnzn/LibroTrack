@@ -62,14 +62,14 @@ $error = $_GET['error'] ?? '';
                 <div class="form-group">
                     <label>Course</label>
                     <select name="course" required>
-                        <option value="">Select course</option>
+                        <option value="" disabled selected hidden>Select course</option>
                         <option>BSIT</option>
                         <option>BSIS</option>
                         <option>BIT</option>
+                        <option>BSINDTECH</option>
                         <option>BTVTED</option>
                         <option>BSECE</option>
-                        <option>BSCpE</option>
-                        <option>Other</option>
+                        <option>BSCPE</option>
                     </select>
                 </div>
 

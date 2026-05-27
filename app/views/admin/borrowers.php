@@ -295,16 +295,14 @@
                 <div class="form-group">
                     <label>Course *</label>
                     <select name="course" id="edit-course" required>
-                        <option value="">Select course</option>
+                        <option value="" disabled selected hidden>Select course</option>
                         <option>BSIT</option>
-                        <option>BSCS</option>
-                        <option>BSED</option>
-                        <option>BSBA</option>
-                        <option>BSME</option>
+                        <option>BSIS</option>
+                        <option>BIT</option>
+                        <option>BSINDTECH</option>
+                        <option>BTVTED</option>
                         <option>BSECE</option>
-                        <option>BSN</option>
-                        <option>BSCRIM</option>
-                        <option>Other</option>
+                        <option>BSCPE</option>
                     </select>
                 </div>
             </div>

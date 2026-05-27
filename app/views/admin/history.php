@@ -143,12 +143,18 @@
                     $deleteLabel = htmlspecialchars($t['studentName'] . ' — ' . $t['bookTitle']);
                 ?>
                 <tr>
-                    <td><?= $t['transactionID'] ?></td>
+                    <td><?= $i + 1 ?></td>
                     <td><?= htmlspecialchars($t['studentName']) ?></td>
                     <td><?= htmlspecialchars($t['bookTitle']) ?></td>
                     <td><?= date('M d, Y', strtotime($t['borrowDate'])) ?></td>
                     <td><?= date('M d, Y', strtotime($t['dueDate'])) ?></td>
-                    <td><?= $t['returnDate'] ? date('M d, Y', strtotime($t['returnDate'])) : '—' ?></td>
+                    <td>
+                        <?php if ($t['returnDate']): ?>
+                            <?= date('M d, Y', strtotime($t['returnDate'])) ?>
+                        <?php else: ?>
+                            <span style="font-size:0.78rem;color:var(--text-muted);font-style:italic;">Not returned</span>
+                        <?php endif; ?>
+                    </td>
                     <td>
                         <?php if ($t['penaltyAmount']): ?>
                             <span class="badge <?= $t['penaltyPaid'] ? 'badge--returned' : 'badge--overdue' ?>">

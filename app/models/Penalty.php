@@ -16,7 +16,7 @@ class Penalty
     // ── READ: All overdue records with penalty info ────────────────────────
     public function getAll(string $search = '', string $status = ''): array
     {
-        $conditions = ["(t.status IN ('borrowed','overdue') AND t.dueDate < CURDATE()) OR t.status = 'overdue'"];
+        $conditions = ["((t.status IN ('borrowed','overdue') AND t.dueDate < CURDATE()) OR t.status = 'overdue')"];
         $params     = [];
         $types      = '';
 
