@@ -3,9 +3,9 @@
 class Database
 {
     private string $host = "localhost";
-    private string $username = "root";
-    private string $password = "";
-    private string $database = "db_librotrack";
+    private string $username = "u367097290_db_librotrack";
+    private string $password = "Librotrack213";
+    private string $database = "u367097290_db_librotrack";
 
     public function connect(): mysqli
     {
