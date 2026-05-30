@@ -116,3 +116,38 @@
     color: var(--text-muted);
     line-height: 1.8;
 }
+
+.demo-reset-2fa {
+    margin-top: 1rem;
+    text-align: left;
+    border: 1px solid #F0C98C;
+    border-radius: 10px;
+    background: #FFF8EA;
+    overflow: hidden;
+}
+
+.demo-reset-2fa summary {
+    cursor: pointer;
+    padding: 0.75rem 0.9rem;
+    color: #8A4E00;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.demo-reset-box {
+    padding: 0 0.9rem 0.9rem;
+}
+
+.demo-reset-box p {
+    color: #805A24;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+}
+
+.demo-reset-btn {
+    width: 100%;
+    border: 1px solid #F0C98C;
+    background: #F8E8C8;
+    color: #6A3900;
+}

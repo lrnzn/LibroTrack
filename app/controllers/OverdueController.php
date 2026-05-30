@@ -12,7 +12,7 @@ class OverdueController
             session_start();
         }
         if (!isset($_SESSION['userID']) || $_SESSION['role'] !== 'admin') {
-            header("Location: /librotrack/public/index.php?controller=Auth&action=login&error=" . urlencode("Please log in to access this page."));
+            header("Location: index.php?controller=Auth&action=login&error=" . urlencode("Please log in to access this page."));
             exit;
         }
         $this->penalty = new Penalty();
@@ -47,16 +47,16 @@ class OverdueController
     public function markPaid(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect("/librotrack/public/index.php?controller=Overdue&action=index");
+            $this->redirect("index.php?controller=Overdue&action=index");
         }
 
         $transactionID = (int)($_POST['transactionID'] ?? 0);
         $result        = $this->penalty->markPaid($transactionID);
 
         if ($result === true) {
-            $this->redirect("/librotrack/public/index.php?controller=Overdue&action=index&flash=Penalty+marked+as+paid.&flash_type=success");
+            $this->redirect("index.php?controller=Overdue&action=index&flash=Penalty+marked+as+paid.&flash_type=success");
         } else {
-            $this->redirect("/librotrack/public/index.php?controller=Overdue&action=index&flash=" . urlencode($result) . "&flash_type=error");
+            $this->redirect("index.php?controller=Overdue&action=index&flash=" . urlencode($result) . "&flash_type=error");
         }
     }
 }

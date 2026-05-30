@@ -284,9 +284,42 @@ form { display: flex; flex-direction: column; gap: 1.1rem; }
 
 /* Responsive */
 @media (max-width: 768px) {
+    .page-wrapper {
+        min-height: 100dvh;
+    }
     .left-panel { display: none; }
-    .right-panel { flex: 1; padding: 1.5rem; }
-    .login-card { box-shadow: none; padding: 2rem 1.5rem; }
+    .right-panel {
+        flex: 1 1 auto;
+        width: 100%;
+        padding: 1rem;
+    }
+    .login-card {
+        max-width: none;
+        box-shadow: none;
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+    .role-selector {
+        flex-direction: row;
+    }
+    .role-btn {
+        min-width: 0;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    .form-footer {
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .login-card {
+        padding: 1.25rem 1rem;
+    }
+    .form-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 /* ── Login Error Message ─────────────────────────────────────────── */
 .login-error {
@@ -316,4 +349,170 @@ form { display: flex; flex-direction: column; gap: 1.1rem; }
     40%       { transform: translateX(6px); }
     60%       { transform: translateX(-4px); }
     80%       { transform: translateX(4px); }
+}
+
+/* ---- UI Refresh Overrides ---- */
+:root {
+    --page-bg: #F7EFE3;
+    --surface: #FFFDF8;
+    --surface-soft: #FBF5EC;
+    --border-soft: #E8D8BF;
+}
+
+body {
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.48), rgba(255,255,255,0) 45%),
+        var(--page-bg);
+    line-height: 1.5;
+}
+
+.left-panel {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 25% 20%, rgba(196,154,108,0.24), transparent 34%),
+        radial-gradient(circle at 75% 75%, rgba(139,94,60,0.26), transparent 36%),
+        #301B0E;
+}
+
+.left-panel::after {
+    content: "";
+    position: absolute;
+    inset: 1.5rem;
+    border: 1px solid rgba(250,243,232,0.12);
+    border-radius: 18px;
+    pointer-events: none;
+}
+
+.brand-icon {
+    filter: drop-shadow(0 16px 28px rgba(0,0,0,0.22));
+}
+
+.left-panel h1 {
+    font-size: 3.35rem;
+    line-height: 1;
+}
+
+.right-panel {
+    background:
+        linear-gradient(145deg, rgba(255,255,255,0.56), rgba(255,255,255,0)),
+        var(--page-bg);
+}
+
+.login-card {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    box-shadow: 0 22px 60px rgba(44,26,14,0.15);
+}
+
+.login-card h2 {
+    font-size: 2.15rem;
+    line-height: 1.1;
+}
+
+.subtitle {
+    font-size: 0.96rem;
+}
+
+.role-selector {
+    background: #EFE1C9;
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+}
+
+.role-btn {
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.role-btn.active {
+    box-shadow: 0 8px 18px rgba(44,26,14,0.18);
+}
+
+.form-group label {
+    font-weight: 700;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="email"],
+.form-group input[type="date"],
+.form-group select {
+    background: #FFFBF4;
+    border-color: var(--border-soft);
+    border-radius: 9px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(184,75,0,0.12);
+}
+
+.remember-me input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+}
+
+.forgot-link {
+    font-weight: 700;
+}
+
+.login-btn {
+    border-radius: 10px;
+    font-weight: 700;
+    box-shadow: 0 10px 24px rgba(44,26,14,0.18);
+}
+
+.login-btn:hover {
+    box-shadow: 0 14px 28px rgba(44,26,14,0.22);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgba(184,75,0,0.22);
+    outline-offset: 2px;
+}
+
+.ui-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.05em;
+    height: 1.05em;
+    margin-right: 0.35rem;
+    line-height: 1;
+    vertical-align: -0.12em;
+}
+
+.toggle-password .ui-icon,
+.login-error-icon .ui-icon {
+    margin-right: 0;
+}
+
+.icon-info { color: #2F72B8; }
+.icon-warning { color: #E5A11A; }
+.icon-danger { color: #D74A3A; }
+.icon-success { color: #2EAD72; }
+.icon-muted { color: #7A6652; }
+
+.role-btn.active .ui-icon,
+.login-btn .ui-icon {
+    color: currentColor;
+}
+
+@media (max-width: 768px) {
+    .right-panel {
+        align-items: center;
+        padding: 1.25rem;
+    }
+
+    .login-card {
+        max-width: 560px;
+        padding: 2rem;
+        box-shadow: 0 18px 42px rgba(44,26,14,0.11);
+    }
 }

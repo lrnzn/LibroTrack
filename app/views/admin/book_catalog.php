@@ -1,4 +1,4 @@
-<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+<?php if (!defined("LIBROTRACK")) { header("Location: index.php?controller=Auth&action=login"); exit; } ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,30 +6,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Book Catalog</title>
-    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/books.css">
 </head>
 <body>
 
 <!-- Top Navigation -->
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Book&action=index" class="active">Books</a></li>
-        <li><a href="#">Borrowers</a></li>
-        <li><a href="#">Transactions</a></li>
-        <li><a href="#">Overdue</a></li>
-        <li><a href="#">Reports</a></li>
+        <li><a href="index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="index.php?controller=Book&action=index" class="active">Books</a></li>
+        <li><a href="index.php?controller=Borrower&action=index">Borrowers</a></li>
+        <li><a href="index.php?controller=Transaction&action=index">Transactions</a></li>
+        <li><a href="index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="/librotrack/public/index.php?controller=Auth&action=login" class="nav-logout">Logout</a>
+        <a href="index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -48,8 +48,8 @@
             </div>
         </div>
         <div class="view-toggle">
-            <a href="/librotrack/public/index.php?controller=Book&action=index" class="view-btn">📋 Management</a>
-            <a href="/librotrack/public/index.php?controller=Book&action=catalog" class="view-btn active">📚 Catalog</a>
+            <a href="index.php?controller=Book&action=index" class="view-btn">📋 Management</a>
+            <a href="index.php?controller=Book&action=catalog" class="view-btn active">📚 Catalog</a>
         </div>
     </div>
 
@@ -76,7 +76,7 @@
             <div class="book-card book-card--<?= $status ?>">
                 <div class="book-cover">
                     <?php if (!empty($book['cover_image'])): ?>
-                        <img src="/librotrack/public/assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
+                        <img src="assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
                              alt="<?= htmlspecialchars($book['title']) ?>"
                              style="width:100%;height:100%;object-fit:cover;">
                     <?php else: ?>
@@ -117,7 +117,7 @@
                         <td><?= $i + 1 ?></td>
                         <td>
                             <?php if (!empty($book['cover_image'])): ?>
-                                <img src="/librotrack/public/assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
+                                <img src="assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
                                      alt="cover" style="height:48px;width:36px;object-fit:cover;border-radius:4px;border:1px solid var(--cream-dark);">
                             <?php else: ?>
                                 <span style="font-size:1.5rem;">📖</span>
@@ -139,7 +139,9 @@
 
 </main>
 
-<script src="/librotrack/public/assets/js/book_catalog.js"></script>
+<script src="assets/js/ui_icons.js"></script>
+<script src="assets/js/mobile_nav.js"></script>
+<script src="assets/js/book_catalog.js"></script>
 
 </body>
 </html>

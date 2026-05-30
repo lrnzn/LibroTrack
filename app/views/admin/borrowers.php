@@ -1,4 +1,4 @@
-<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+<?php if (!defined("LIBROTRACK")) { header("Location: index.php?controller=Auth&action=login"); exit; } ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,9 +6,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Borrower Management</title>
-    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/borrower_management.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/books.css">
+    <link rel="stylesheet" href="assets/css/borrower_management.css">
 </head>
 <body>
 
@@ -23,22 +23,22 @@
 <!-- Navbar -->
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
+        <img src="assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Book&action=index">Books</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Borrower&action=index" class="active">Borrowers</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Transaction&action=index">Transactions</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Report&action=index">Reports</a></li>
+        <li><a href="index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="index.php?controller=Book&action=index">Books</a></li>
+        <li><a href="index.php?controller=Borrower&action=index" class="active">Borrowers</a></li>
+        <li><a href="index.php?controller=Transaction&action=index">Transactions</a></li>
+        <li><a href="index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
+        <a href="index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -81,7 +81,7 @@
     </div>
 
     <!-- Search & Filter -->
-    <form class="toolbar search-form" method="GET" action="/librotrack/public/index.php">
+    <form class="toolbar search-form" method="GET" action="index.php">
         <input type="hidden" name="controller" value="Borrower">
         <input type="hidden" name="action"     value="index">
         <input type="text" name="search" class="search-input"
@@ -103,7 +103,7 @@
         </select>
         <button type="submit" class="btn-primary">Search</button>
         <?php if ($search || $course || $status): ?>
-            <a href="/librotrack/public/index.php?controller=Borrower&action=index"
+            <a href="index.php?controller=Borrower&action=index"
                class="btn-cancel" style="text-decoration:none;">✕ Clear</a>
         <?php endif; ?>
     </form>
@@ -185,7 +185,7 @@
         <button class="modal-close" onclick="closeAddModal()">✕</button>
     </div>
     <div class="modal-body">
-        <form action="/librotrack/public/index.php?controller=Borrower&action=store" method="POST">
+        <form action="index.php?controller=Borrower&action=store" method="POST">
             <div class="form-row">
                 <div class="form-group">
                     <label>First Name *</label>
@@ -265,7 +265,7 @@
         <button class="modal-close" onclick="closeEditModal()">✕</button>
     </div>
     <div class="modal-body">
-        <form action="/librotrack/public/index.php?controller=Borrower&action=update" method="POST">
+        <form action="index.php?controller=Borrower&action=update" method="POST">
             <input type="hidden" name="studentID" id="edit-studentID">
             <div class="form-row">
                 <div class="form-group">
@@ -330,7 +330,7 @@
             Are you sure you want to remove <strong id="delete-borrower-name"></strong> from the system?
             This action cannot be undone.
         </p>
-        <form action="/librotrack/public/index.php?controller=Borrower&action=destroy" method="POST">
+        <form action="index.php?controller=Borrower&action=destroy" method="POST">
             <input type="hidden" name="studentID" id="delete-studentID">
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
@@ -340,7 +340,9 @@
     </div>
 </div>
 
-<script src="/librotrack/public/assets/js/borrower_management.js"></script>
+<script src="assets/js/ui_icons.js"></script>
+<script src="assets/js/mobile_nav.js"></script>
+<script src="assets/js/borrower_management.js"></script>
 
 </body>
 </html>

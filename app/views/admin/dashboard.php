@@ -1,4 +1,4 @@
-<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+<?php if (!defined("LIBROTRACK")) { header("Location: index.php?controller=Auth&action=login"); exit; } ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,28 +6,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Dashboard</title>
-    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
 </head>
 <body>
 
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
+        <img src="assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index" class="active">Dashboard</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Book&action=index">Books</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Transaction&action=index">Transactions</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Report&action=index">Reports</a></li>
+        <li><a href="index.php?controller=Dashboard&action=index" class="active">Dashboard</a></li>
+        <li><a href="index.php?controller=Book&action=index">Books</a></li>
+        <li><a href="index.php?controller=Borrower&action=index">Borrowers</a></li>
+        <li><a href="index.php?controller=Transaction&action=index">Transactions</a></li>
+        <li><a href="index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
+        <a href="index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -88,7 +88,7 @@
         <div class="card">
             <div class="card-head">
                 <h2>Recent Transactions</h2>
-                <a href="/librotrack/public/index.php?controller=Transaction&action=history" class="card-link">View all →</a>
+                <a href="index.php?controller=Transaction&action=history" class="card-link">View all →</a>
             </div>
             <table class="data-table">
                 <thead>
@@ -135,7 +135,7 @@
             <div class="card card--alert">
                 <div class="card-head">
                     <h2>⚠️ Overdue Books</h2>
-                    <a href="/librotrack/public/index.php?controller=Overdue&action=index" class="card-link">Manage →</a>
+                    <a href="index.php?controller=Overdue&action=index" class="card-link">Manage →</a>
                 </div>
                 <?php if (empty($overdueBooks)): ?>
                     <p style="font-size:0.875rem;color:var(--text-muted);text-align:center;padding:1rem 0;">
@@ -162,10 +162,13 @@
             <div class="card">
                 <div class="card-head"><h2>Quick Actions</h2></div>
                 <div class="quick-actions">
-                    <a href="/librotrack/public/index.php?controller=Transaction&action=index"      class="action-btn">📤 Borrow Book</a>
-                    <a href="/librotrack/public/index.php?controller=Transaction&action=returnPage" class="action-btn">📥 Return Book</a>
-                    <a href="/librotrack/public/index.php?controller=Book&action=index"             class="action-btn">➕ Add Book</a>
-                    <a href="/librotrack/public/index.php?controller=Borrower&action=index"        class="action-btn">👤 Add Borrower</a>
+                    <a href="index.php?controller=Transaction&action=index"      class="action-btn">📤 Borrow Book</a>
+                    <a href="index.php?controller=Transaction&action=returnPage" class="action-btn">📥 Return Book</a>
+                    <a href="index.php?controller=Book&action=index"             class="action-btn">➕ Add Book</a>
+                    <a href="index.php?controller=Borrower&action=index"        class="action-btn">👤 Add Borrower</a>
+                    <a href="index.php?controller=Auth&action=reset2fa"
+                       class="action-btn"
+                       onclick="return confirm('Reset 2FA for this admin account and show a new QR code?');">🔐 Reset 2FA</a>
                 </div>
             </div>
 
@@ -174,5 +177,7 @@
 
 </main>
 
+<script src="assets/js/ui_icons.js"></script>
+<script src="assets/js/mobile_nav.js"></script>
 </body>
 </html>

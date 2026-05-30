@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
         monthSelect.addEventListener('change', function () {
             const selected = this.options[this.selectedIndex];
             yearInput.value = selected.dataset.year || '';
+            this.form.submit();
         });
     }
 });

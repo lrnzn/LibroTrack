@@ -12,7 +12,7 @@ class BookController
             session_start();
         }
         if (!isset($_SESSION['userID']) || $_SESSION['role'] !== 'admin') {
-            header("Location: /librotrack/public/index.php?controller=Auth&action=login&error=" . urlencode("Please log in to access this page."));
+            header("Location: index.php?controller=Auth&action=login&error=" . urlencode("Please log in to access this page."));
             exit;
         }
         $this->book = new Book();
@@ -73,16 +73,16 @@ class BookController
     public function store(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect("/LibroTrack/public/index.php?controller=Book&action=index");
+            $this->redirect("index.php?controller=Book&action=index");
         }
 
         $file   = $_FILES['cover_image'] ?? [];
         $result = $this->book->create($_POST, $file);
 
         if ($result === true) {
-            $this->redirect("/LibroTrack/public/index.php?controller=Book&action=index&flash=Book+added+successfully.&flash_type=success&flash_action=added");
+            $this->redirect("index.php?controller=Book&action=index&flash=Book+added+successfully.&flash_type=success&flash_action=added");
         } else {
-            $this->redirect("/LibroTrack/public/index.php?controller=Book&action=index&flash=" . urlencode($result) . "&flash_type=error");
+            $this->redirect("index.php?controller=Book&action=index&flash=" . urlencode($result) . "&flash_type=error");
         }
     }
 
@@ -103,7 +103,7 @@ class BookController
     public function update(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect("/LibroTrack/public/index.php?controller=Book&action=index");
+            $this->redirect("index.php?controller=Book&action=index");
         }
 
         $id     = (int)($_POST['bookID'] ?? 0);
@@ -111,9 +111,9 @@ class BookController
         $result = $this->book->update($id, $_POST, $file);
 
         if ($result === true) {
-            $this->redirect("/LibroTrack/public/index.php?controller=Book&action=index&flash=Book+updated+successfully.&flash_type=success&flash_action=updated");
+            $this->redirect("index.php?controller=Book&action=index&flash=Book+updated+successfully.&flash_type=success&flash_action=updated");
         } else {
-            $this->redirect("/LibroTrack/public/index.php?controller=Book&action=index&flash=" . urlencode($result) . "&flash_type=error");
+            $this->redirect("index.php?controller=Book&action=index&flash=" . urlencode($result) . "&flash_type=error");
         }
     }
 
@@ -121,16 +121,16 @@ class BookController
     public function destroy(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect("/LibroTrack/public/index.php?controller=Book&action=index");
+            $this->redirect("index.php?controller=Book&action=index");
         }
 
         $id     = (int)($_POST['bookID'] ?? 0);
         $result = $this->book->delete($id);
 
         if ($result === true) {
-            $this->redirect("/LibroTrack/public/index.php?controller=Book&action=index&flash=Book+deleted+successfully.&flash_type=success&flash_action=deleted");
+            $this->redirect("index.php?controller=Book&action=index&flash=Book+deleted+successfully.&flash_type=success&flash_action=deleted");
         } else {
-            $this->redirect("/LibroTrack/public/index.php?controller=Book&action=index&flash=" . urlencode($result) . "&flash_type=error");
+            $this->redirect("index.php?controller=Book&action=index&flash=" . urlencode($result) . "&flash_type=error");
         }
     }
 }

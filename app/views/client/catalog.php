@@ -1,4 +1,4 @@
-<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+<?php if (!defined("LIBROTRACK")) { header("Location: index.php?controller=Auth&action=login"); exit; } ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,23 +6,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Browse Books</title>
-    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/books.css">
 </head>
 <body>
 
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
+        <img src="assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge nav-role-badge--student">Student</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/librotrack/public/index.php?controller=Student&action=index">Home</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Student&action=catalog" class="active">Browse Books</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Student&action=borrowed">My Borrowed</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Student&action=history">My History</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Profile&action=index">Profile</a></li>
+        <li><a href="index.php?controller=Student&action=index">Home</a></li>
+        <li><a href="index.php?controller=Student&action=catalog" class="active">Browse Books</a></li>
+        <li><a href="index.php?controller=Student&action=borrowed">My Borrowed</a></li>
+        <li><a href="index.php?controller=Student&action=history">My History</a></li>
+        <li><a href="index.php?controller=Profile&action=index">Profile</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">
@@ -33,7 +33,7 @@
             <?php endif; ?>
         </span>
         <span class="nav-username"><?= htmlspecialchars($student['fname']) ?></span>
-        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
+        <a href="index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -50,7 +50,7 @@
         </div>
     </div>
 
-    <form class="toolbar" method="GET" action="/librotrack/public/index.php">
+    <form class="toolbar" method="GET" action="index.php">
         <input type="hidden" name="controller" value="Student">
         <input type="hidden" name="action"     value="catalog">
         <input type="text" name="search" class="search-input"
@@ -71,7 +71,7 @@
         </select>
         <button type="submit" class="btn-primary">Search</button>
         <?php if ($search || $genre || $status): ?>
-            <a href="/librotrack/public/index.php?controller=Student&action=catalog"
+            <a href="index.php?controller=Student&action=catalog"
                class="btn-cancel" style="text-decoration:none;">✕ Clear</a>
         <?php endif; ?>
     </form>
@@ -94,7 +94,7 @@
         <div class="book-card book-card--<?= $status_cls ?>">
             <div class="book-cover">
                 <?php if (!empty($book['cover_image'])): ?>
-                    <img src="/librotrack/public/assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
+                    <img src="assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
                          alt="<?= htmlspecialchars($book['title']) ?>"
                          style="width:100%;height:100%;object-fit:cover;">
                 <?php else: ?>
@@ -126,7 +126,7 @@
                     <td><?= $i + 1 ?></td>
                     <td>
                         <?php if (!empty($book['cover_image'])): ?>
-                            <img src="/librotrack/public/assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
+                            <img src="assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
                                  alt="cover" style="height:48px;width:36px;object-fit:cover;border-radius:4px;">
                         <?php else: ?>
                             <span style="font-size:1.5rem;">📖</span>
@@ -157,6 +157,8 @@
 
 </main>
 
-<script src="/librotrack/public/assets/js/student_catalog.js"></script>
+<script src="assets/js/ui_icons.js"></script>
+<script src="assets/js/mobile_nav.js"></script>
+<script src="assets/js/student_catalog.js"></script>
 </body>
 </html>

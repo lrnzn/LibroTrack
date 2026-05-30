@@ -1,4 +1,4 @@
-<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+<?php if (!defined("LIBROTRACK")) { header("Location: index.php?controller=Auth&action=login"); exit; } ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,9 +6,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Book Management</title>
-    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/book_management.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/books.css">
+    <link rel="stylesheet" href="assets/css/book_management.css">
 </head>
 <body>
 
@@ -23,22 +23,22 @@
 <!-- Navbar -->
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
+        <img src="assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Book&action=index" class="active">Books</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Transaction&action=index">Transactions</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Report&action=index">Reports</a></li>
+        <li><a href="index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="index.php?controller=Book&action=index" class="active">Books</a></li>
+        <li><a href="index.php?controller=Borrower&action=index">Borrowers</a></li>
+        <li><a href="index.php?controller=Transaction&action=index">Transactions</a></li>
+        <li><a href="index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
+        <a href="index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -54,8 +54,8 @@
             <button class="btn-primary" onclick="openAddModal()">➕ Add New Book</button>
         </div>
         <div class="view-toggle">
-            <a href="/librotrack/public/index.php?controller=Book&action=index" class="view-btn active">📋 Management</a>
-            <a href="/librotrack/public/index.php?controller=Book&action=catalog" class="view-btn">📚 Catalog</a>
+            <a href="index.php?controller=Book&action=index" class="view-btn active">📋 Management</a>
+            <a href="index.php?controller=Book&action=catalog" class="view-btn">📚 Catalog</a>
         </div>
     </div>
 
@@ -92,7 +92,7 @@
     </div>
 
     <!-- Search & Filter -->
-    <form class="toolbar search-form" method="GET" action="/librotrack/public/index.php">
+    <form class="toolbar search-form" method="GET" action="index.php">
         <input type="hidden" name="controller" value="Book">
         <input type="hidden" name="action"     value="index">
         <input type="text" name="search" class="search-input"
@@ -113,7 +113,7 @@
         </select>
         <button type="submit" class="btn-primary">Search</button>
         <?php if ($search || $genre || $status): ?>
-            <a href="/librotrack/public/index.php?controller=Book&action=index"
+            <a href="index.php?controller=Book&action=index"
                class="btn-cancel" style="text-decoration:none;">✕ Clear</a>
         <?php endif; ?>
     </form>
@@ -155,7 +155,7 @@
                     <td><?= $i + 1 ?></td>
                     <td>
                         <?php if (!empty($book['cover_image'])): ?>
-                            <img src="/librotrack/public/assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
+                            <img src="assets/img/covers/<?= htmlspecialchars($book['cover_image']) ?>"
                                  alt="Cover" style="height:48px;width:36px;object-fit:cover;border-radius:4px;border:1px solid var(--cream-dark);">
                         <?php else: ?>
                             <span style="font-size:1.5rem;">📖</span>
@@ -196,7 +196,7 @@
         <button class="modal-close" onclick="closeAddModal()">✕</button>
     </div>
     <div class="modal-body">
-        <form action="/librotrack/public/index.php?controller=Book&action=store" method="POST" enctype="multipart/form-data">
+        <form action="index.php?controller=Book&action=store" method="POST" enctype="multipart/form-data">
             <div class="form-row">
                 <div class="form-group">
                     <label>Book Title *</label>
@@ -278,7 +278,7 @@
         <button class="modal-close" onclick="closeEditModal()">✕</button>
     </div>
     <div class="modal-body">
-        <form action="/librotrack/public/index.php?controller=Book&action=update" method="POST" enctype="multipart/form-data">
+        <form action="index.php?controller=Book&action=update" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="bookID" id="edit-bookID">
             <div class="form-row">
                 <div class="form-group">
@@ -360,7 +360,7 @@
             Are you sure you want to delete <strong id="delete-book-title"></strong>?
             This action cannot be undone.
         </p>
-        <form action="/librotrack/public/index.php?controller=Book&action=destroy" method="POST">
+        <form action="index.php?controller=Book&action=destroy" method="POST">
             <input type="hidden" name="bookID" id="delete-bookID">
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
@@ -370,7 +370,9 @@
     </div>
 </div>
 
-<script src="/librotrack/public/assets/js/book_management.js"></script>
+<script src="assets/js/ui_icons.js"></script>
+<script src="assets/js/mobile_nav.js"></script>
+<script src="assets/js/book_management.js"></script>
 
 </body>
 </html>

@@ -56,6 +56,27 @@ class User
         $stmt->execute();
     }
 
+    // Reset 2FA so the account can scan a fresh QR code again.
+    public function reset2FA(int $userID): void
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE tbl_users SET two_fa_secret = NULL, two_fa_enabled = 0 WHERE userID = ?"
+        );
+        $stmt->bind_param('i', $userID);
+        $stmt->execute();
+    }
+
+    public function verifyPasswordById(int $userID, string $password): bool
+    {
+        $user = $this->findById($userID);
+
+        if (!$user) {
+            return false;
+        }
+
+        return password_verify($password, $user['password']) || $user['password'] === $password;
+    }
+
     // ── AUTH: Verify student by username OR student number ────────────────
     public function authenticateStudent(string $identifier, string $password): ?array
     {

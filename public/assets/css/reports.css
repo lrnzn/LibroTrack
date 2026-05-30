@@ -41,3 +41,30 @@
     transition: width 0.6s ease;
     min-width: 40px;
 }
+
+/* ---- UI Refresh Overrides ---- */
+.report-count {
+    background: var(--surface-soft);
+    border-color: var(--border-soft);
+    border-radius: 999px;
+}
+
+.genre-bars {
+    gap: 1rem;
+}
+
+.genre-label {
+    color: #5F4938;
+    font-weight: 700;
+}
+
+.genre-bar-wrap {
+    background: #EFE1C9;
+    border: 1px solid var(--border-soft);
+    height: 28px;
+}
+
+.genre-bar {
+    background: linear-gradient(90deg, var(--brown-mid), var(--accent));
+    font-weight: 700;
+}

@@ -13,14 +13,14 @@ class StudentController
     {
         session_start();
         if (!isset($_SESSION['userID'])) {
-            header("Location: /librotrack/public/index.php?controller=Auth&action=login");
+            header("Location: index.php?controller=Auth&action=login");
             exit;
         }
         $this->model   = new StudentDashboard();
         $this->student = $this->model->getStudentByUserID((int)$_SESSION['userID']);
 
         if (!$this->student) {
-            header("Location: /librotrack/public/index.php?controller=Auth&action=logout");
+            header("Location: index.php?controller=Auth&action=logout");
             exit;
         }
 
@@ -28,7 +28,7 @@ class StudentController
         require_once __DIR__ . "/../models/Profile.php";
         $profile = (new Profile())->getProfile((int)$_SESSION['userID']);
         if (!empty($profile['profile_picture'])) {
-            $this->profilePicUrl = '/librotrack/public/assets/img/profiles/' . $profile['profile_picture'];
+            $this->profilePicUrl = 'assets/img/profiles/' . $profile['profile_picture'];
         }
     }
 

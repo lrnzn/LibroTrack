@@ -3,7 +3,7 @@
 // ── EDIT Modal ────────────────────────────────────────────────────
 async function openEditModal(id) {
     try {
-        const res  = await fetch(`/librotrack/public/index.php?controller=Transaction&action=get&id=${id}`);
+        const res  = await fetch(`index.php?controller=Transaction&action=get&id=${id}`);
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
 

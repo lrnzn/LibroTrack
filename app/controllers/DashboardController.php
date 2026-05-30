@@ -12,7 +12,7 @@ class DashboardController
             session_start();
         }
         if (!isset($_SESSION['userID']) || $_SESSION['role'] !== 'admin') {
-            header("Location: /librotrack/public/index.php?controller=Auth&action=login&error=" . urlencode("Please log in to access this page."));
+            header("Location: index.php?controller=Auth&action=login&error=" . urlencode("Please log in to access this page."));
             exit;
         }
         $this->dashboard = new Dashboard();

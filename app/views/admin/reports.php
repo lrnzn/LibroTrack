@@ -1,4 +1,4 @@
-<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+<?php if (!defined("LIBROTRACK")) { header("Location: index.php?controller=Auth&action=login"); exit; } ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,31 +6,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Reports</title>
-    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/borrowers.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/reports.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/books.css">
+    <link rel="stylesheet" href="assets/css/borrowers.css">
+    <link rel="stylesheet" href="assets/css/reports.css">
 </head>
 <body>
 
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
+        <img src="assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Book&action=index">Books</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Transaction&action=index">Transactions</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Report&action=index" class="active">Reports</a></li>
+        <li><a href="index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="index.php?controller=Book&action=index">Books</a></li>
+        <li><a href="index.php?controller=Borrower&action=index">Borrowers</a></li>
+        <li><a href="index.php?controller=Transaction&action=index">Transactions</a></li>
+        <li><a href="index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="index.php?controller=Report&action=index" class="active">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
+        <a href="index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -42,15 +42,15 @@
             <p class="page-subtitle">Library activity summaries and statistics.</p>
         </div>
         <div class="header-actions">
-            <form method="GET" action="/librotrack/public/index.php" style="display:flex;gap:0.5rem;align-items:center;">
+            <form method="GET" action="index.php" style="display:flex;gap:0.5rem;align-items:center;">
                 <input type="hidden" name="controller" value="Report">
                 <input type="hidden" name="action"     value="index">
-                <select name="month" class="filter-select" onchange="this.form.submit()">
+                <select name="month" class="filter-select">
                     <option value="">All Time</option>
                     <?php foreach ($availableMonths as $m): ?>
                         <option value="<?= $m['month'] ?>"
                             data-year="<?= $m['year'] ?>"
-                            <?= ($month == $m['month']) ? 'selected' : '' ?>>
+                            <?= ((int)$month === (int)$m['month'] && (int)$year === (int)$m['year']) ? 'selected' : '' ?>>
                             <?= htmlspecialchars($m['label']) ?>
                         </option>
                     <?php endforeach; ?>
@@ -187,6 +187,8 @@
 
 </main>
 
-<script src="/librotrack/public/assets/js/reports.js"></script>
+<script src="assets/js/ui_icons.js"></script>
+<script src="assets/js/mobile_nav.js"></script>
+<script src="assets/js/reports.js"></script>
 </body>
 </html>

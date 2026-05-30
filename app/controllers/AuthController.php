@@ -43,7 +43,7 @@ class AuthController
             : trim($_POST['username']   ?? '');
 
         if (empty($username) || empty($password)) {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login&error=" .
+            $this->redirect("index.php?controller=Auth&action=login&error=" .
                 urlencode("Please fill in all fields."));
         }
 
@@ -54,14 +54,14 @@ class AuthController
         }
 
         if (!$user) {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login&error=" .
+            $this->redirect("index.php?controller=Auth&action=login&error=" .
                 urlencode("Invalid username or password."));
         }
 
         // Role mismatch check
         $expectedRole = $role === 'student' ? 'student' : 'admin';
         if ($user['role'] !== $expectedRole) {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login&error=" .
+            $this->redirect("index.php?controller=Auth&action=login&error=" .
                 urlencode("Invalid username or password."));
         }
 
@@ -72,7 +72,7 @@ class AuthController
             $_SESSION['username'] = $user['username'];
             $_SESSION['role']     = $user['role'];
             $_SESSION['name']     = $user['name'];
-            $this->redirect("/librotrack/public/index.php?controller=Student&action=index");
+            $this->redirect("index.php?controller=Student&action=index");
         }
 
         // Admin — store as pending until 2FA is verified
@@ -83,9 +83,9 @@ class AuthController
 
         // Has 2FA already been set up?
         if (!empty($user['two_fa_enabled']) && $user['two_fa_enabled'] == 1) {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=verify2fa");
+            $this->redirect("index.php?controller=Auth&action=verify2fa");
         } else {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=setup2fa");
+            $this->redirect("index.php?controller=Auth&action=setup2fa");
         }
     }
 
@@ -93,14 +93,14 @@ class AuthController
     public function setup2fa(): void
     {
         if (!isset($_SESSION['pending_userID'])) {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
+            $this->redirect("index.php?controller=Auth&action=login");
         }
 
         $userID = (int)$_SESSION['pending_userID'];
         $user   = $this->user->findById($userID);
 
         if (!$user) {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
+            $this->redirect("index.php?controller=Auth&action=login");
         }
 
         // Generate and save secret if not yet set
@@ -126,7 +126,7 @@ class AuthController
     public function confirm2fa(): void
     {
         if (!isset($_SESSION['pending_userID'])) {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
+            $this->redirect("index.php?controller=Auth&action=login");
         }
 
         $userID = (int)$_SESSION['pending_userID'];
@@ -147,7 +147,7 @@ class AuthController
             unset($_SESSION['pending_userID'], $_SESSION['pending_username'],
                   $_SESSION['pending_role'],  $_SESSION['pending_name']);
 
-            $this->redirect("/librotrack/public/index.php?controller=Dashboard&action=index");
+            $this->redirect("index.php?controller=Dashboard&action=index");
         }
 
         $error = "Invalid code. Please try again.";
@@ -162,7 +162,7 @@ class AuthController
     public function verify2fa(): void
     {
         if (!isset($_SESSION['pending_userID'])) {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
+            $this->redirect("index.php?controller=Auth&action=login");
         }
 
         $error = $_GET['error'] ?? '';
@@ -173,7 +173,7 @@ class AuthController
     public function processVerify(): void
     {
         if (!isset($_SESSION['pending_userID'])) {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
+            $this->redirect("index.php?controller=Auth&action=login");
         }
 
         $userID = (int)$_SESSION['pending_userID'];
@@ -190,11 +190,59 @@ class AuthController
             unset($_SESSION['pending_userID'], $_SESSION['pending_username'],
                   $_SESSION['pending_role'],  $_SESSION['pending_name']);
 
-            $this->redirect("/librotrack/public/index.php?controller=Dashboard&action=index");
+            $this->redirect("index.php?controller=Dashboard&action=index");
         }
 
-        $this->redirect("/librotrack/public/index.php?controller=Auth&action=verify2fa&error=" .
+        $this->redirect("index.php?controller=Auth&action=verify2fa&error=" .
             urlencode("Invalid code. Please try again."));
+    }
+
+    // ── HANDLE: Reset 2FA for the currently logged-in admin ─────────────────
+    public function reset2fa(): void
+    {
+        if (!isset($_SESSION['userID']) || ($_SESSION['role'] ?? '') !== 'admin') {
+            $this->redirect("index.php?controller=Auth&action=login&error=" .
+                urlencode("Please log in to reset 2FA."));
+        }
+
+        $userID = (int)$_SESSION['userID'];
+        $user   = $this->user->findById($userID);
+
+        if (!$user) {
+            $this->redirect("index.php?controller=Auth&action=login");
+        }
+
+        $this->user->reset2FA($userID);
+
+        $_SESSION['pending_userID']   = $userID;
+        $_SESSION['pending_username'] = $user['username'];
+        $_SESSION['pending_name']     = $user['name'];
+        $_SESSION['pending_role']     = $user['role'];
+
+        $this->redirect("index.php?controller=Auth&action=setup2fa");
+    }
+
+    // ── DEMO: Reset pending admin 2FA from the verification screen ──────────
+    public function demoReset2fa(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['pending_userID'])) {
+            $this->redirect("index.php?controller=Auth&action=login");
+        }
+
+        if (($_SESSION['pending_role'] ?? '') !== 'admin') {
+            $this->redirect("index.php?controller=Auth&action=login");
+        }
+
+        $userID   = (int)$_SESSION['pending_userID'];
+        $password = $_POST['password'] ?? '';
+
+        if (!$this->user->verifyPasswordById($userID, $password)) {
+            $this->redirect("index.php?controller=Auth&action=verify2fa&error=" .
+                urlencode("Password confirmation failed. 2FA was not reset."));
+        }
+
+        $this->user->reset2FA($userID);
+        $this->redirect("index.php?controller=Auth&action=setup2fa");
     }
 
     // ── SHOW: Register page ───────────────────────────────────────────────
@@ -207,7 +255,7 @@ class AuthController
     public function store(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=register");
+            $this->redirect("index.php?controller=Auth&action=register");
         }
 
         require_once __DIR__ . "/../models/Student.php";
@@ -215,13 +263,13 @@ class AuthController
         $required = ['fname', 'lname', 'studentNumber', 'course', 'email', 'username', 'password', 'confirm_password'];
         foreach ($required as $field) {
             if (empty($_POST[$field])) {
-                $this->redirect("/librotrack/public/index.php?controller=Auth&action=register&error=" .
+                $this->redirect("index.php?controller=Auth&action=register&error=" .
                     urlencode("Please fill in all required fields."));
             }
         }
 
         if ($_POST['password'] !== $_POST['confirm_password']) {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=register&error=" .
+            $this->redirect("index.php?controller=Auth&action=register&error=" .
                 urlencode("Passwords do not match."));
         }
 
@@ -239,10 +287,10 @@ class AuthController
         $result = $student->createWithUsername($data, $_POST['username'], $_POST['password']);
 
         if ($result === true) {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=login&error=" .
+            $this->redirect("index.php?controller=Auth&action=login&error=" .
                 urlencode("Account created successfully! You can now sign in."));
         } else {
-            $this->redirect("/librotrack/public/index.php?controller=Auth&action=register&error=" .
+            $this->redirect("index.php?controller=Auth&action=register&error=" .
                 urlencode($result));
         }
     }
@@ -254,6 +302,6 @@ class AuthController
             session_start();
         }
         session_destroy();
-        $this->redirect("/librotrack/public/index.php?controller=Auth&action=login");
+        $this->redirect("index.php?controller=Auth&action=login");
     }
 }

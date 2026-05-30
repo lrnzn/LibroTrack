@@ -18,7 +18,7 @@ document.getElementById('student-search').addEventListener('input', function () 
 
 async function searchStudent(query, results) {
     try {
-        const res  = await fetch(`/librotrack/public/index.php?controller=Transaction&action=findStudent&q=${encodeURIComponent(query)}`);
+        const res  = await fetch(`index.php?controller=Transaction&action=findStudent&q=${encodeURIComponent(query)}`);
         const data = await res.json();
 
         results.innerHTML = '';
@@ -80,7 +80,7 @@ document.getElementById('book-search').addEventListener('input', function () {
 
 async function searchBook(query, results) {
     try {
-        const res  = await fetch(`/librotrack/public/index.php?controller=Transaction&action=findBook&q=${encodeURIComponent(query)}`);
+        const res  = await fetch(`index.php?controller=Transaction&action=findBook&q=${encodeURIComponent(query)}`);
         const data = await res.json();
 
         results.innerHTML = '';

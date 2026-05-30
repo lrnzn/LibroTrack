@@ -13,7 +13,7 @@ $controllerName = $controller . "Controller";
 $controllerFile = "../app/controllers/" . $controllerName . ".php";
 
 if (!file_exists($controllerFile)) {
-    header("Location: /librotrack/public/index.php?controller=Auth&action=login");
+    header("Location: index.php?controller=Auth&action=login");
     exit;
 }
 

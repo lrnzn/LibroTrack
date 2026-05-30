@@ -18,7 +18,7 @@ async function openViewModal(id) {
         '<p style="text-align:center;color:var(--text-muted);padding:1rem;">Loading...</p>';
 
     try {
-        const res  = await fetch(`/librotrack/public/index.php?controller=Borrower&action=get&id=${id}`);
+        const res  = await fetch(`index.php?controller=Borrower&action=get&id=${id}`);
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
 
@@ -39,7 +39,7 @@ async function openViewModal(id) {
             : `<tr><td colspan="3" style="text-align:center;color:var(--text-muted);">No active borrows.</td></tr>`;
 
         const avatarHtml = s.profile_picture
-            ? `<img src="/librotrack/public/assets/img/profiles/${s.profile_picture}"
+            ? `<img src="assets/img/profiles/${s.profile_picture}"
                     style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--cream-dark);">`
             : `<div style="width:56px;height:56px;border-radius:50%;background:var(--brown-warm);color:white;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;font-family:'Playfair Display',serif;">${s.fname.charAt(0).toUpperCase()}</div>`;
 
@@ -83,7 +83,7 @@ function closeViewModal() {
 // ── EDIT Modal ────────────────────────────────────────────────────
 async function openEditModal(id) {
     try {
-        const res  = await fetch(`/librotrack/public/index.php?controller=Borrower&action=get&id=${id}`);
+        const res  = await fetch(`index.php?controller=Borrower&action=get&id=${id}`);
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
 

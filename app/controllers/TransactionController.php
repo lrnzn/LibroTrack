@@ -12,7 +12,7 @@ class TransactionController
             session_start();
         }
         if (!isset($_SESSION['userID']) || $_SESSION['role'] !== 'admin') {
-            header("Location: /librotrack/public/index.php?controller=Auth&action=login&error=" . urlencode("Please log in to access this page."));
+            header("Location: index.php?controller=Auth&action=login&error=" . urlencode("Please log in to access this page."));
             exit;
         }
         $this->transaction = new Transaction();
@@ -121,15 +121,15 @@ class TransactionController
     public function borrow(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect("/LibroTrack/public/index.php?controller=Transaction&action=index");
+            $this->redirect("index.php?controller=Transaction&action=index");
         }
 
         $result = $this->transaction->borrow($_POST);
 
         if ($result === true) {
-            $this->redirect("/LibroTrack/public/index.php?controller=Transaction&action=index&flash=Borrow+recorded+successfully.&flash_type=success");
+            $this->redirect("index.php?controller=Transaction&action=index&flash=Borrow+recorded+successfully.&flash_type=success");
         } else {
-            $this->redirect("/LibroTrack/public/index.php?controller=Transaction&action=index&flash=" . urlencode($result) . "&flash_type=error");
+            $this->redirect("index.php?controller=Transaction&action=index&flash=" . urlencode($result) . "&flash_type=error");
         }
     }
 
@@ -137,16 +137,16 @@ class TransactionController
     public function processReturn(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect("/LibroTrack/public/index.php?controller=Transaction&action=returnPage");
+            $this->redirect("index.php?controller=Transaction&action=returnPage");
         }
 
         $id     = (int)($_POST['transactionID'] ?? 0);
         $result = $this->transaction->returnBook($id, $_POST);
 
         if ($result === true) {
-            $this->redirect("/LibroTrack/public/index.php?controller=Transaction&action=returnPage&flash=Book+returned+successfully.&flash_type=success");
+            $this->redirect("index.php?controller=Transaction&action=returnPage&flash=Book+returned+successfully.&flash_type=success");
         } else {
-            $this->redirect("/LibroTrack/public/index.php?controller=Transaction&action=returnPage&flash=" . urlencode($result) . "&flash_type=error");
+            $this->redirect("index.php?controller=Transaction&action=returnPage&flash=" . urlencode($result) . "&flash_type=error");
         }
     }
 
@@ -154,16 +154,16 @@ class TransactionController
     public function update(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect("/LibroTrack/public/index.php?controller=Transaction&action=history");
+            $this->redirect("index.php?controller=Transaction&action=history");
         }
 
         $id     = (int)($_POST['transactionID'] ?? 0);
         $result = $this->transaction->update($id, $_POST);
 
         if ($result === true) {
-            $this->redirect("/LibroTrack/public/index.php?controller=Transaction&action=history&flash=Transaction+updated+successfully.&flash_type=success");
+            $this->redirect("index.php?controller=Transaction&action=history&flash=Transaction+updated+successfully.&flash_type=success");
         } else {
-            $this->redirect("/LibroTrack/public/index.php?controller=Transaction&action=history&flash=" . urlencode($result) . "&flash_type=error");
+            $this->redirect("index.php?controller=Transaction&action=history&flash=" . urlencode($result) . "&flash_type=error");
         }
     }
 
@@ -171,16 +171,16 @@ class TransactionController
     public function destroy(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect("/LibroTrack/public/index.php?controller=Transaction&action=history");
+            $this->redirect("index.php?controller=Transaction&action=history");
         }
 
         $id     = (int)($_POST['transactionID'] ?? 0);
         $result = $this->transaction->delete($id);
 
         if ($result === true) {
-            $this->redirect("/LibroTrack/public/index.php?controller=Transaction&action=history&flash=Transaction+deleted+successfully.&flash_type=success");
+            $this->redirect("index.php?controller=Transaction&action=history&flash=Transaction+deleted+successfully.&flash_type=success");
         } else {
-            $this->redirect("/LibroTrack/public/index.php?controller=Transaction&action=history&flash=" . urlencode($result) . "&flash_type=error");
+            $this->redirect("index.php?controller=Transaction&action=history&flash=" . urlencode($result) . "&flash_type=error");
         }
     }
 }

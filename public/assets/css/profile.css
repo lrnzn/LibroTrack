@@ -22,6 +22,19 @@
     align-items: start;
 }
 
+@media (max-width: 768px) {
+    .profile-layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .profile-card,
+    .profile-form-card {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
 /* ── Sidebar Card ────────────────────────────────────────────────── */
 .profile-pic-card {
     text-align: center;
@@ -116,4 +129,44 @@
     object-fit: cover;
     border: 2px solid var(--cream-dark);
     vertical-align: middle;
+}
+
+/* ---- UI Refresh Overrides ---- */
+.profile-layout {
+    gap: 1.25rem;
+}
+
+.profile-pic-card,
+.profile-form-card {
+    border-radius: 10px;
+}
+
+.profile-avatar {
+    border-color: var(--border-soft);
+    box-shadow: 0 12px 28px rgba(44,26,14,0.13);
+}
+
+.profile-avatar-placeholder {
+    background:
+        linear-gradient(145deg, rgba(255,255,255,0.18), rgba(255,255,255,0)),
+        var(--brown-warm);
+}
+
+.profile-name {
+    font-size: 1.25rem;
+}
+
+.profile-meta {
+    color: #66503E;
+}
+
+.btn-upload {
+    border-radius: 9px;
+    font-weight: 700;
+    box-shadow: 0 8px 18px rgba(44,26,14,0.14);
+}
+
+.toast {
+    border-radius: 10px;
+    box-shadow: 0 14px 32px rgba(44, 26, 14, 0.18);
 }

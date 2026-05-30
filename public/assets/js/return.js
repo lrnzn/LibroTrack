@@ -24,7 +24,7 @@ document.getElementById('student-search').addEventListener('input', function () 
 
 async function searchStudent(query, results) {
     try {
-        const res  = await fetch(`/librotrack/public/index.php?controller=Transaction&action=findStudent&q=${encodeURIComponent(query)}`);
+        const res  = await fetch(`index.php?controller=Transaction&action=findStudent&q=${encodeURIComponent(query)}`);
         const data = await res.json();
 
         results.innerHTML = '';
@@ -83,7 +83,7 @@ function clearStudent() {
 // ── Load active borrows for selected student ──────────────────────
 async function loadActiveBorrows(studentID) {
     try {
-        const res  = await fetch(`/librotrack/public/index.php?controller=Transaction&action=getActiveBorrows&studentID=${studentID}`);
+        const res  = await fetch(`index.php?controller=Transaction&action=getActiveBorrows&studentID=${studentID}`);
         const data = await res.json();
         const select = document.getElementById('book-select');
 

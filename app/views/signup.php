@@ -8,14 +8,14 @@ $error = $_GET['error'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Sign Up</title>
-    <link rel="stylesheet" href="/librotrack/public/assets/css/login.css">
+    <link rel="stylesheet" href="assets/css/login.css">
 </head>
 <body>
 
 <div class="page-wrapper">
 
     <div class="left-panel">
-        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
         <h1>LibroTrack</h1>
         <p>Manage your library with ease. Track books, borrowers, and transactions in one place.</p>
     </div>
@@ -30,7 +30,7 @@ $error = $_GET['error'] ?? '';
                 <p class="login-error">❌ <?= htmlspecialchars($error) ?></p>
             <?php endif; ?>
 
-            <form action="/librotrack/public/index.php?controller=Auth&action=store" method="POST">
+            <form action="index.php?controller=Auth&action=store" method="POST">
 
                 <div class="form-row">
                     <div class="form-group">
@@ -103,7 +103,7 @@ $error = $_GET['error'] ?? '';
 
                 <p class="register-prompt">
                     Already have an account?
-                    <a href="/librotrack/public/index.php?controller=Auth&action=login">Sign in here</a>
+                    <a href="index.php?controller=Auth&action=login">Sign in here</a>
                 </p>
 
             </form>
@@ -112,7 +112,8 @@ $error = $_GET['error'] ?? '';
 
 </div>
 
-<script src="/librotrack/public/assets/js/signup.js"></script>
+<script src="/librotrack/public/assets/js/ui_icons.js"></script>
+<script src="assets/js/signup.js"></script>
 
 </body>
 </html>

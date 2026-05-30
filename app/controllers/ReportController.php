@@ -12,7 +12,7 @@ class ReportController
             session_start();
         }
         if (!isset($_SESSION['userID']) || $_SESSION['role'] !== 'admin') {
-            header("Location: /librotrack/public/index.php?controller=Auth&action=login&error=" . urlencode("Please log in to access this page."));
+            header("Location: index.php?controller=Auth&action=login&error=" . urlencode("Please log in to access this page."));
             exit;
         }
         $this->report = new Report();
@@ -26,7 +26,7 @@ class ReportController
         $stats          = $this->report->getStats($month, $year);
         $mostBorrowed   = $this->report->getMostBorrowed(5, $month, $year);
         $topBorrowers   = $this->report->getTopBorrowers(5, $month, $year);
-        $byGenre        = $this->report->getBorrowsByGenre();
+        $byGenre        = $this->report->getBorrowsByGenre($month, $year);
         $availableMonths = $this->report->getAvailableMonths();
 
         $stats = array_merge(

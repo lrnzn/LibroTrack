@@ -1,4 +1,4 @@
-<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+<?php if (!defined("LIBROTRACK")) { header("Location: index.php?controller=Auth&action=login"); exit; } ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,23 +6,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Student Dashboard</title>
-    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/books.css">
 </head>
 <body>
 
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
+        <img src="assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge nav-role-badge--student">Student</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/librotrack/public/index.php?controller=Student&action=index" class="active">Home</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Student&action=catalog">Browse Books</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Student&action=borrowed">My Borrowed</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Student&action=history">My History</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Profile&action=index">Profile</a></li>
+        <li><a href="index.php?controller=Student&action=index" class="active">Home</a></li>
+        <li><a href="index.php?controller=Student&action=catalog">Browse Books</a></li>
+        <li><a href="index.php?controller=Student&action=borrowed">My Borrowed</a></li>
+        <li><a href="index.php?controller=Student&action=history">My History</a></li>
+        <li><a href="index.php?controller=Profile&action=index">Profile</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">
@@ -33,7 +33,7 @@
             <?php endif; ?>
         </span>
         <span class="nav-username"><?= htmlspecialchars($student['fname']) ?></span>
-        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
+        <a href="index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -78,7 +78,7 @@
         <div class="card">
             <div class="card-head">
                 <h2>My Borrowed Books</h2>
-                <a href="/librotrack/public/index.php?controller=Student&action=borrowed" class="card-link">View all →</a>
+                <a href="index.php?controller=Student&action=borrowed" class="card-link">View all →</a>
             </div>
 
             <?php if ((int)$stats['overdue_count'] > 0): ?>
@@ -118,9 +118,9 @@
             <div class="card">
                 <div class="card-head"><h2>Quick Actions</h2></div>
                 <div class="quick-actions">
-                    <a href="/librotrack/public/index.php?controller=Student&action=catalog" class="action-btn">🔍 Browse Books</a>
-                    <a href="/librotrack/public/index.php?controller=Student&action=borrowed" class="action-btn">📖 My Books</a>
-                    <a href="/librotrack/public/index.php?controller=Student&action=history" class="action-btn">🕘 My History</a>
+                    <a href="index.php?controller=Student&action=catalog" class="action-btn">🔍 Browse Books</a>
+                    <a href="index.php?controller=Student&action=borrowed" class="action-btn">📖 My Books</a>
+                    <a href="index.php?controller=Student&action=history" class="action-btn">🕘 My History</a>
                 </div>
             </div>
 
@@ -130,7 +130,7 @@
                 </p>
                 <p style="color:var(--text-muted);font-size:0.875rem;">Borrow slots remaining</p>
                 <?php if ($stats['slots_remaining'] > 0): ?>
-                    <a href="/librotrack/public/index.php?controller=Student&action=catalog"
+                    <a href="index.php?controller=Student&action=catalog"
                        class="btn-primary" style="display:inline-block;margin-top:1rem;">Browse Books</a>
                 <?php else: ?>
                     <p style="font-size:0.82rem;color:var(--warning);margin-top:0.5rem;">
@@ -142,5 +142,7 @@
 
     </div>
 </main>
+<script src="assets/js/ui_icons.js"></script>
+<script src="assets/js/mobile_nav.js"></script>
 </body>
 </html>

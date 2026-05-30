@@ -1,4 +1,4 @@
-<?php if (!defined("LIBROTRACK")) { header("Location: /librotrack/public/index.php?controller=Auth&action=login"); exit; } ?>
+<?php if (!defined("LIBROTRACK")) { header("Location: index.php?controller=Auth&action=login"); exit; } ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,10 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Return Book</title>
-    <link rel="stylesheet" href="/librotrack/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/books.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/borrowers.css">
-    <link rel="stylesheet" href="/librotrack/public/assets/css/livesearch.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/books.css">
+    <link rel="stylesheet" href="assets/css/borrowers.css">
+    <link rel="stylesheet" href="assets/css/livesearch.css">
 </head>
 <body>
 
@@ -22,22 +22,22 @@
 
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
+        <img src="assets/img/logo.gif" alt="LibroTrack" class="brand-icon">
         <span class="nav-title">LibroTrack</span>
         <span class="nav-role-badge">Admin</span>
     </div>
     <ul class="nav-links">
-        <li><a href="/librotrack/public/index.php?controller=Dashboard&action=index">Dashboard</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Book&action=index">Books</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Borrower&action=index">Borrowers</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Transaction&action=index" class="active">Transactions</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Overdue&action=index">Overdue</a></li>
-        <li><a href="/librotrack/public/index.php?controller=Report&action=index">Reports</a></li>
+        <li><a href="index.php?controller=Dashboard&action=index">Dashboard</a></li>
+        <li><a href="index.php?controller=Book&action=index">Books</a></li>
+        <li><a href="index.php?controller=Borrower&action=index">Borrowers</a></li>
+        <li><a href="index.php?controller=Transaction&action=index" class="active">Transactions</a></li>
+        <li><a href="index.php?controller=Overdue&action=index">Overdue</a></li>
+        <li><a href="index.php?controller=Report&action=index">Reports</a></li>
     </ul>
     <div class="nav-user">
         <span class="nav-avatar">👩‍💼</span>
         <span class="nav-username">Librarian</span>
-        <a href="/librotrack/public/index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
+        <a href="index.php?controller=Auth&action=logout" class="nav-logout">Logout</a>
     </div>
 </nav>
 
@@ -49,9 +49,9 @@
             <p class="page-subtitle">Process a book return transaction.</p>
         </div>
         <div class="view-toggle">
-            <a href="/librotrack/public/index.php?controller=Transaction&action=index"      class="view-btn">📤 Borrow</a>
-            <a href="/librotrack/public/index.php?controller=Transaction&action=returnPage" class="view-btn active">📥 Return</a>
-            <a href="/librotrack/public/index.php?controller=Transaction&action=history"    class="view-btn">🕘 History</a>
+            <a href="index.php?controller=Transaction&action=index"      class="view-btn">📤 Borrow</a>
+            <a href="index.php?controller=Transaction&action=returnPage" class="view-btn active">📥 Return</a>
+            <a href="index.php?controller=Transaction&action=history"    class="view-btn">🕘 History</a>
         </div>
     </div>
 
@@ -60,7 +60,7 @@
         <!-- Return Form -->
         <div class="card transaction-form">
             <div class="card-head"><h2>Process Return</h2></div>
-            <form action="/librotrack/public/index.php?controller=Transaction&action=processReturn"
+            <form action="index.php?controller=Transaction&action=processReturn"
                   method="POST">
                 <input type="hidden" name="transactionID" id="input-transactionID">
                 <input type="hidden" name="daysOverdue"   id="input-daysOverdue" value="0">
@@ -134,7 +134,7 @@
         <div class="card">
             <div class="card-head">
                 <h2>Recent Returns</h2>
-                <a href="/librotrack/public/index.php?controller=Transaction&action=history" class="card-link">View all →</a>
+                <a href="index.php?controller=Transaction&action=history" class="card-link">View all →</a>
             </div>
             <table class="data-table">
                 <thead>
@@ -166,6 +166,8 @@
     </div>
 </main>
 
-<script src="/librotrack/public/assets/js/return.js"></script>
+<script src="assets/js/ui_icons.js"></script>
+<script src="assets/js/mobile_nav.js"></script>
+<script src="assets/js/return.js"></script>
 </body>
 </html>

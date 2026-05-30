@@ -18,7 +18,7 @@ function togglePassword() {
 function handleLogin(e) {
     e.preventDefault();
     const form = e.target;
-    form.action = '/librotrack/public/index.php?controller=Auth&action=authenticate';
+    form.action = 'index.php?controller=Auth&action=authenticate';
     form.method = 'POST';
     form.submit();
 }

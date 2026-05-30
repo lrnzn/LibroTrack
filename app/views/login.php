@@ -7,14 +7,14 @@ $error = $_GET['error'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LibroTrack — Login</title>
-    <link rel="stylesheet" href="/librotrack/public/assets/css/login.css">
+    <link rel="stylesheet" href="assets/css/login.css">
 </head>
 <body>
 <div class="page-wrapper">
 
     <!-- Left Panel -->
     <div class="left-panel">
-        <img src="/librotrack/public/assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
+        <img src="assets/img/logo.gif" alt="LibroTrack Logo" class="brand-icon">
         <h1>LibroTrack</h1>
         <p>Your campus library,<br>organized and at your fingertips.</p>
     </div>
@@ -72,13 +72,14 @@ $error = $_GET['error'] ?? '';
             </form>
 
             <p id="register-prompt" class="register-prompt" style="display:none;">
-                Don't have an account? <a href="/librotrack/public/index.php?controller=Auth&action=register">Register here</a>
+                Don't have an account? <a href="index.php?controller=Auth&action=register">Register here</a>
             </p>
 
         </div>
     </div>
 
 </div>
-<script src="/librotrack/public/assets/js/login.js"></script>
+<script src="/librotrack/public/assets/js/ui_icons.js"></script>
+<script src="assets/js/login.js"></script>
 </body>
 </html>

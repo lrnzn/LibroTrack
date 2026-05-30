@@ -7,7 +7,7 @@ class Profile
     private mysqli $db;
 
     const UPLOAD_DIR    = __DIR__ . "/../../public/assets/img/profiles/";
-    const UPLOAD_URL    = "/librotrack/public/assets/img/profiles/";
+    const UPLOAD_URL    = "assets/img/profiles/";
     const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     const MAX_SIZE      = 5 * 1024 * 1024; // 5MB
 

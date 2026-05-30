@@ -8,7 +8,7 @@ class Book
 
     // Upload directory relative to project root (public-accessible)
     const UPLOAD_DIR  = __DIR__ . "/../../public/assets/img/covers/";
-    const UPLOAD_URL  = "/LibroTrack/public/assets/img/covers/";
+    const UPLOAD_URL  = "assets/img/covers/";
     const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     const MAX_SIZE    = 2 * 1024 * 1024; // 2MB
 

@@ -171,6 +171,77 @@
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
     .transaction-layout { grid-template-columns: 1fr; }
-    .borrowed-card { flex-direction: column; align-items: flex-start; }
-    .borrowed-card-status { align-items: flex-start; }
+    .info-preview,
+    .borrower-profile {
+        align-items: flex-start;
+    }
+    .borrower-stats {
+        grid-template-columns: 1fr;
+    }
+    .borrowed-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+    .borrowed-card-status {
+        width: 100%;
+        min-width: 0;
+        align-items: flex-start;
+    }
+    .due-info {
+        align-items: flex-start;
+    }
+}
+
+/* ---- UI Refresh Overrides ---- */
+.transaction-layout {
+    gap: 1.25rem;
+}
+
+.info-preview,
+.borrower-profile,
+.b-stat,
+.penalty-rate {
+    border-color: var(--border-soft);
+    border-radius: 10px;
+    background: var(--surface-soft);
+}
+
+.preview-icon,
+.borrower-avatar,
+.borrowed-card-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--surface);
+    flex: 0 0 auto;
+}
+
+.borrowed-card {
+    background: var(--surface);
+    border-color: var(--border-soft);
+    border-radius: 10px;
+    box-shadow: 0 10px 24px var(--shadow);
+}
+
+.borrowed-card:hover {
+    box-shadow: 0 14px 30px var(--shadow-strong);
+}
+
+.borrow-btn {
+    border-radius: 9px;
+    font-weight: 700;
+    box-shadow: 0 8px 18px rgba(44,26,14,0.14);
+}
+
+.due-label {
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .transaction-layout {
+        gap: 1rem;
+    }
 }
