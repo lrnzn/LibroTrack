@@ -68,3 +68,22 @@
     background: linear-gradient(90deg, var(--brown-mid), var(--accent));
     font-weight: 700;
 }
+
+@media (max-width: 768px) {
+    .genre-bars,
+    .genre-bar-item,
+    .genre-bar-wrap {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .genre-bar {
+        min-width: 34px;
+        padding-right: 6px;
+    }
+
+    .report-count {
+        min-width: 2rem;
+        text-align: center;
+    }
+}
