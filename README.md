@@ -1,4 +1,4 @@
-# LibroTrack — Library Management System
+# LibroTrack
 
 A web-based Library Management System developed using PHP (MVC Architecture) and MySQL.  
 This system allows librarians to manage books, borrowers, and transactions, while students can browse the catalog and track their borrowed books.
